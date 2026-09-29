@@ -1,0 +1,56 @@
+% Original course diagram. Each skip starts at the input of its own branch.
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  flow/.style={-{Latex[length=2mm]},thick,draw=navy},
+  skip/.style={-{Latex[length=2mm]},thick,draw=coral!85!black},
+  box/.style={draw=navy,fill=navy!5,rounded corners=2pt,
+    minimum width=3.6cm,minimum height=0.66cm,align=center,inner sep=4pt},
+  operation/.style={box,draw=teal!80!black,fill=teal!8,minimum height=0.9cm},
+  add/.style={circle,draw=coral!85!black,fill=coral!10,
+    minimum size=0.56cm,inner sep=0pt},
+  explanation/.style={align=left,text width=4.3cm,text=navy}
+]
+\node[box] (input) at (0,0) {Input $X$};
+\node[box] (norm1) at (0,-1.0) {LayerNorm 1};
+\node[operation] (attn) at (0,-2.1)
+  {Multi-head causal attention\\then dropout};
+\node[add] (add1) at (0,-3.3) {$+$};
+\node[box] (norm2) at (0,-4.4) {LayerNorm 2};
+\node[operation,minimum width=4.3cm] (mlp) at (0,-5.5)
+  {Linear $d\!\to\!4d$, GELU, linear $4d\!\to\!d$\\then dropout};
+\node[add] (add2) at (0,-6.7) {$+$};
+\node[box] (output) at (0,-7.65) {Output $Y$};
+
+\draw[flow] (input) -- (norm1);
+\draw[flow] (norm1) -- (attn);
+\draw[flow] (attn) -- (add1);
+\draw[flow] (add1) -- node[right] {$U$} (norm2);
+\draw[flow] (norm2) -- (mlp);
+\draw[flow] (mlp) -- (add2);
+\draw[flow] (add2) -- (output);
+
+% The first bypass carries X; the second carries the updated state U.
+\draw[skip] (input.west) -- (-3,0)
+  -- node[left] {$X$} (-3,-3.3) -- (add1.west);
+\draw[skip] (add1.east) -- (3,-3.3)
+  -- node[right] {$U$} (3,-6.7) -- (add2.east);
+
+\node[explanation] at (6.1,-1.55)
+  {Attention mixes information across visible token positions.};
+\node[explanation] at (6.1,-4.7)
+  {The MLP transforms each position separately, using the same weights at every
+  position.};
+\node[explanation] at (6.1,-7.1)
+  {Both residual sums preserve the shape $B\times T\times d$.};
+\end{tikzpicture}
+\caption{One GPT decoder block with normalization before each branch
+(pre-LayerNorm). The first residual addition produces
+$U=X+\operatorname{Drop}(\operatorname{Attn}(\operatorname{LN}_1(X)))$.
+The second produces
+$Y=U+\operatorname{Drop}(\operatorname{MLP}(\operatorname{LN}_2(U)))$.
+The two bypasses therefore carry different states, $X$ and $U$.
+Dropout is active during training and disabled during evaluation.}
+\label{fig:gpt-block}
+\end{figure}

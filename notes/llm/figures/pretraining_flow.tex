@@ -1,0 +1,61 @@
+% Original course diagram. All text, mathematics, and connectors remain vector.
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  flow/.style={-{Latex[length=2mm]},thick,draw=navy},
+  target/.style={-{Latex[length=2mm]},draw=navy,dashed},
+  update/.style={-{Latex[length=2mm]},thick,draw=coral!85!black},
+  box/.style={draw=navy,fill=navy!5,rounded corners=2pt,
+    align=center,minimum height=0.88cm,inner sep=4pt},
+  train/.style={box,draw=teal!80!black,fill=teal!8},
+  check/.style={box,draw=navy,fill=codebg}
+]
+\node[box,text width=1.5cm] (corpus) at (1,0) {Text\\corpus};
+\node[box,text width=1.8cm] (split) at (3.25,0) {Split text\\before windows};
+\node[train,text width=2.1cm] (trainwin) at (6,1.3)
+  {Training\\windows $(x,y)$};
+\node[check,text width=2.1cm] (valwin) at (6,-1.3)
+  {Validation\\windows $(x,y)$};
+\node[train,text width=1.9cm] (trainmodel) at (9,1.3)
+  {GPT $\theta$\\logits $z$};
+\node[check,text width=1.9cm,minimum height=1.08cm] (valmodel) at (9,-1.3)
+  {GPT $\theta$\\no gradients\\logits $z$};
+\node[train,text width=1.4cm] (trainloss) at (11.7,1.3)
+  {$\mathrm{CE}(z,y)$\\training loss};
+\node[check,text width=1.4cm] (valloss) at (11.7,-1.3)
+  {$\mathrm{CE}(z,y)$\\held-out loss};
+\node[train,text width=1.55cm,draw=coral!85!black,fill=coral!8]
+  (optim) at (14.05,1.3) {Backward\\AdamW step};
+\node[align=center,text width=1.65cm,text=navy] (report) at (14.05,-1.3)
+  {Report and\\compare};
+
+\draw[flow] (corpus) -- (split);
+\draw[flow] (split.east) -- ++(0.35,0) |- (trainwin.west);
+\draw[flow] (split.east) -- ++(0.35,0) |- (valwin.west);
+\draw[flow] (trainwin) -- node[above] {$x$} (trainmodel);
+\draw[flow] (valwin) -- node[above] {$x$} (valmodel);
+\draw[flow] (trainmodel) -- (trainloss);
+\draw[flow] (valmodel) -- (valloss);
+\draw[flow] (trainloss) -- (optim);
+\draw[flow] (valloss) -- (report);
+
+% Shifted target IDs go directly to the loss, not into the decoder input.
+\draw[target] (trainwin.south) -- (6,0.2)
+  -- node[below] {targets $y$} (11.7,0.2) -- (trainloss.south);
+\draw[target] (valwin.south) -- (6,-2.4)
+  -- node[below] {targets $y$} (11.7,-2.4) -- (valloss.south);
+\draw[update] (optim.north) -- (14.05,2.6)
+  -- node[above] {update $\theta$; repeat with the next batch} (9,2.6)
+  -- (trainmodel.north);
+\end{tikzpicture}
+\caption{The pretraining data and optimization paths. Split the corpus before
+forming overlapping windows, tokenize each split with the same fixed tokenizer,
+and shift each window by one position to obtain input IDs $x$ and target IDs $y$.
+Cross-entropy (CE) compares the logits with the targets. Only the training branch
+computes gradients and updates parameters. Validation uses the same current
+parameters in evaluation mode, with dropout disabled and no gradient recording.
+If the tokenizer is learned from the course corpus, fit it only on the training
+split.}
+\label{fig:pretraining-flow}
+\end{figure}

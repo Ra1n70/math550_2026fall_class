@@ -1,0 +1,1018 @@
+\documentclass[11pt]{article}
+\usepackage[margin=0.82in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,booktabs,graphicx,float,longtable,microtype,tabularx,xcolor,listings,fancyhdr,tikz,tcolorbox,titlesec,enumitem}
+\tcbuselibrary{breakable}
+\usetikzlibrary{arrows.meta,positioning,matrix}
+\usepackage{xurl}
+\usepackage[colorlinks=true,urlcolor=blue!55!black,linkcolor=blue!55!black]{hyperref}
+\graphicspath{{../../output/llm/figures/}}
+\definecolor{navy}{HTML}{1F4E78}
+\definecolor{coral}{HTML}{E07A5F}
+\definecolor{teal}{HTML}{2A9D8F}
+\definecolor{codebg}{HTML}{F3F6F8}
+\titleformat{\section}{\Large\bfseries\color{navy}}{\thesection}{0.7em}{}
+\titleformat{\subsection}{\large\bfseries\color{teal!65!black}}{\thesubsection}{0.7em}{}
+\newtcolorbox{studybox}[1]{breakable,colback=navy!4,colframe=navy!55,
+  title={#1},fonttitle=\bfseries,boxrule=0.5pt,arc=1.5mm,
+  left=7pt,right=7pt,top=5pt,bottom=5pt}
+\setlist{itemsep=2pt,topsep=4pt}
+\setcounter{tocdepth}{2}
+\setlength{\emergencystretch}{2em}
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
+\raggedbottom
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\pagestyle{fancy}
+\setlength{\headheight}{14pt}
+\fancyhf{}
+\lhead{MATH 550 -- LLMs from Scratch}
+\rhead{\thepage}
+\lstset{basicstyle=\ttfamily\small,backgroundcolor=\color{codebg},frame=single,
+  rulecolor=\color{navy!25},breaklines=true,columns=fullflexible,
+  showstringspaces=false,keepspaces=true,tabsize=4,
+  keywordstyle=\color{navy}\bfseries,commentstyle=\color{teal!60!black},
+  stringstyle=\color{coral!70!black},aboveskip=9pt,belowskip=8pt}
+% Every example is short enough for one page. Keep complete code together.
+\BeforeBeginEnvironment{lstlisting}{\par\noindent\begin{minipage}{\linewidth}}
+\AfterEndEnvironment{lstlisting}{\end{minipage}\par}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\softmax}{\operatorname{softmax}}
+\newcommand{\bookrepo}{https://github.com/rasbt/LLMs-from-scratch/blob/f49cad747931fe6af0a7d2802cd480d1c1a0ec8e}
+\newcommand{\booklink}[2]{\href{\bookrepo/#1}{#2}}
+\hypersetup{pdftitle={Build Large Language Models from Scratch},
+  pdfauthor={MATH 550},pdfsubject={GPT-2 pretraining and post-training extensions}}
+\title{\color{navy}\textbf{Large Language Models from Scratch}\\
+\large A guided implementation of GPT-2 pretraining\\[3pt]}
+\author{MATH 550 Mathematical Data Science Capstone}
+\date{}
+
+\begin{document}
+\maketitle
+\begin{studybox}{How to use these notes}
+Read Part I alongside Sebastian Raschka's \emph{Build a Large Language Model
+(From Scratch)} (Manning, 2024). The teaching order follows chapters 2--5:
+text and batches, attention, the GPT decoder, and pretraining. The explanations,
+worked examples, and diagrams here are original course material rather than a
+reproduction of the book. Part II retains instruction-tuning and RLHF lessons.
+\end{studybox}
+\tableofcontents
+\clearpage
+
+\section{Learning route and scope}
+
+The goal is to make the complete causal-language-model pipeline inspectable.
+Students build the tokenizer, decoder, objectives, data packing, optimization,
+generation, supervised fine-tuning (SFT), pairwise reward model, and a compact
+reinforcement-learning-from-human-feedback (RLHF) loop. PyTorch supplies tensor
+operations, standard layers, automatic differentiation, and optimizers. The
+local course module does not import a pretrained model, a pretrained tokenizer,
+\texttt{torch.nn.Transformer}, or a GPT/Transformer training framework.
+Raschka's main chapter code instead uses the existing GPT-2 BPE tokenizer via
+\texttt{tiktoken}; this is a deliberate difference, not a model-architecture
+shortcut. Both routes make the decoder and its training computation explicit.
+
+The resulting checkpoints are teaching models. Our archived public-book example
+used a corpus with about eight million training tokens, but its 30-update run
+consumed only a small sampled portion. It demonstrated the training pipeline,
+not complete training on that corpus. It cannot reproduce the factual breadth, safety work,
+multilingual coverage, or compute of a production assistant. A falling loss is
+evidence that an objective is being optimized; it is not evidence of truth,
+reasoning, harmlessness, or usefulness.
+
+\subsection*{Learning objectives}
+By the end of nine lecture/studio units, students should be able to:
+\begin{enumerate}
+\item explain UTF-8 byte tokenization and derive the BPE merge procedure;
+\item derive causal next-token maximum likelihood and connect it to cross-entropy;
+\item track every tensor shape through multi-head causal self-attention;
+\item implement and test a GPT-style decoder in elementary PyTorch;
+\item design a leakage-resistant pretraining split and interpret held-out loss;
+\item construct assistant-only SFT labels and diagnose prompt-loss leakage;
+\item derive the Bradley--Terry pairwise reward objective;
+\item derive KL-shaped rewards, generalized advantage estimation (GAE), and
+the clipped proximal policy optimization (PPO) objective; and
+\item audit data rights, memorization, reward hacking, historical bias, and the
+gap between a classroom experiment and a production LLM.
+\end{enumerate}
+
+\subsection{Book-to-course map}
+The chapter notebooks are the primary reference; the shorter companion scripts
+occasionally use different hyperparameters. Links below are pinned to repository
+revision
+\begin{center}\texttt{f49cad747931fe6af0a7d2802cd480d1c1a0ec8e}.\end{center}
+This is the same revision used for the GPT-2 slide deck, keeping reading
+assignments stable.
+\begin{center}\small
+\begin{tabularx}{\linewidth}{@{}p{0.17\linewidth}XX@{}}
+\toprule
+Reading & Main construction & Local course adaptation \\
+\midrule
+\booklink{ch02/01_main-chapter-code/ch02.ipynb}{Chapter 2} & Token IDs, GPT-2 BPE, shifted windows, token/position embeddings & Train a smaller byte-level BPE on training books. \\
+\booklink{ch03/01_main-chapter-code/ch03.ipynb}{Chapter 3} & Simple attention, learned Q/K/V, causal masking, multiple heads & Fuse the three projections in one linear layer. \\
+\booklink{ch04/01_main-chapter-code/ch04.ipynb}{Chapter 4} & LayerNorm, GELU, residual blocks, complete GPT & Use tied embeddings and smaller device presets. \\
+\booklink{ch05/01_main-chapter-code/ch05.ipynb}{Chapter 5} & Loss/evaluation, first training loop, sampling, checkpoints & Scale to whole-book holdouts and memory-mapped token streams. \\
+\booklink{appendix-D/01_main-chapter-code/appendix-D.ipynb}{Appendix D} & Warmup, cosine decay, gradient clipping & Add accumulation, tokenizer checks, and optional DDP. \\
+\bottomrule
+\end{tabularx}\end{center}
+
+\subsection{Nine-unit course map}
+\begin{longtable}{@{}P{0.05\linewidth}P{0.21\linewidth}P{0.42\linewidth}P{0.21\linewidth}@{}}
+\toprule
+Unit & Central question & Main ideas and studio & Evidence of learning \\
+\midrule
+\endhead
+1 & What is a token? & Unicode, UTF-8 bytes, special tokens, BPE frequency table,
+round-trip and compression tests. & Train and serialize a tokenizer. \\
+2 & Why next-token prediction? & Chain rule, teacher forcing, cross-entropy,
+bigram baseline, train/validation leakage. & Derive and fit the baseline. \\
+3 & How can a token use context? & Embeddings, queries, keys, values, scale,
+causal mask, multiple heads. & Shape trace and future-token invariance test. \\
+4 & What makes GPT a trainable system? & Pre-norm blocks, residual paths, MLP,
+position embeddings, initialization, tied weights. & Implement a forward/backward pass. \\
+5 & What does pretraining evidence mean? & First a minimal AdamW loop, loss,
+perplexity, sampling, and checkpoints; then schedules and hardware extensions. & Run public books and compare bigram. \\
+6 & Why does a base model not follow instructions? & Prompt template, SFT,
+assistant-only mask, padding, truncation, held-out prompts. & Fine-tune on Dolly 15k. \\
+7 & How can preferences become a scalar? & Chosen/rejected pairs, reward head,
+Bradley--Terry likelihood, pair accuracy, distribution shift. & Train and audit a reward model. \\
+8 & Where is the reinforcement learning? & Rollouts, reference policy, token KL,
+state values, GAE, PPO clipping, entropy. & Execute and test one PPO update. \\
+9 & What would justify a claim? & Memorization, reward hacking, unsafe data,
+human evaluation, data rights, scaling limits. & Model card and evidence audit. \\
+\bottomrule
+\end{longtable}
+
+\clearpage
+\part{The book-aligned pretraining path}
+\section{Text, training windows, and embeddings: chapter 2}
+\label{sec:text}
+
+\subsection{Token IDs are not token vectors}
+The preprocessing pipeline turns text into a sequence of integer IDs. A learned
+embedding layer then maps those IDs to vectors. Tokenization determines the
+prediction alphabet; embedding coordinates are model parameters learned during
+pretraining. A token may be a complete word, a word fragment, punctuation, or a
+byte-related unit. Whitespace affects tokenization, so the tokens for a word in
+isolation need not match those for the same letters after a space.
+
+Raschka first builds simple tokenizers to expose splitting, vocabulary lookup,
+unknown tokens, and special tokens, then uses GPT-2 byte-pair encoding (BPE).
+The main code uses a vocabulary of $50{,}257$, obtained with
+\texttt{tiktoken.get\_encoding("gpt2")}. Using that tokenizer does not load
+any pretrained GPT weights.
+The local course route below trains a smaller tokenizer and is not compatible
+with the released GPT-2 vocabulary.
+
+\subsection{Course extension: learning byte-pair merges}
+
+Computers receive text as bytes. UTF-8 maps every Unicode string to a sequence
+in $\{0,\ldots,255\}^*$. A byte tokenizer is therefore lossless and has no
+unknown token. Its weakness is sequence length: a frequent English word may use
+several tokens, and a non-ASCII character often uses several bytes.
+
+Byte-pair encoding starts with the 256 byte symbols. Within simple regex
+pre-tokens, count every adjacent pair, merge the most frequent pair, assign a new
+integer ID, and repeat. If $c(s)$ is the frequency of token sequence $s$, then
+the score of pair $(a,b)$ is
+\[
+C(a,b)=\sum_s c(s)\sum_{i=1}^{|s|-1}
+\mathbf{1}\{(s_i,s_{i+1})=(a,b)\}.
+\]
+Training stores an ordered list of merges. Encoding must apply the available
+merge with smallest training rank, not merely the pair that happens to appear
+most often in a new string. Decoding concatenates the byte strings represented
+by the final token IDs and then performs UTF-8 decoding.
+
+The course reserves five non-byte control tokens: end-of-text, pad, system,
+user, and assistant. The archived small experiment used 512 entries: 256 raw
+bytes, five control tokens, and 251 learned merges. This is an experiment
+setting, not a fixed requirement; a later 10,000-entry request may produce a
+larger actual vocabulary. Fit the tokenizer on training books only.
+Fitting it on validation books would leak their spelling and frequency
+structure into the model-selection process.
+
+The requested BPE size is an upper bound. Training stops before that bound if no
+remaining pair meets the minimum frequency, so the saved tokenizer and corpus
+metadata record the actual vocabulary size. The standard pretraining drivers use
+that actual size directly. A customized model may instead round its embedding
+and output tables upward for hardware alignment; those extra rows are model
+parameters, not decodable tokens.
+
+\subsection*{Tokenizer checks}
+\begin{itemize}
+\item Unicode round trip: \texttt{decode(encode(text)) == text}.
+\item Determinism: identical text and settings produce identical merge ranks.
+\item Serialization: a saved and reloaded tokenizer produces identical IDs.
+\item Compression: repeated common substrings use fewer BPE tokens than bytes.
+\item Boundary rule: merges never cross the declared pre-token boundary.
+\end{itemize}
+
+\subsection{One-token shifts create the training targets}
+Given token stream $[11,7,23,5,9,4]$ and context length $T=4$, the first input
+window is $[11,7,23,5]$ and its target is $[7,23,5,9]$. Thus the model predicts a
+next token at \emph{every} input position, not only at the end of the window.
+Raschka's \texttt{GPTDatasetV1} packages these pairs and a PyTorch DataLoader
+batches them. With stride $s$, successive starting indices differ by $s$.
+Stride $1$ gives heavily overlapping windows; stride $T$ gives nonoverlapping
+input windows. In either case targets remain shifted by exactly one token.
+
+\begin{lstlisting}[language=Python]
+ids = torch.tensor([11, 7, 23, 5, 9, 4], dtype=torch.long)
+T, stride = 4, 1
+pairs = [(ids[i:i+T], ids[i+1:i+T+1])
+         for i in range(0, len(ids) - T, stride)]
+X = torch.stack([x for x, y in pairs])  # (2, 4)
+Y = torch.stack([y for x, y in pairs])  # (2, 4)
+\end{lstlisting}
+
+A context of $T$ tokens needs $T+1$ consecutive tokens to form all its labels.
+Windows without all $T$ targets are dropped in this example. The causal mask
+and the shift solve different problems: the shift specifies the prediction
+target, while the mask prevents the network from reading that target as a
+future input. Unshifted targets permit trivial copying of the visible token.
+
+\subsection{Token lookup plus position lookup}
+For vocabulary size $V$, model width $d$, and maximum context $C$, learn tables
+$E_{\rm tok}\in\mathbb R^{V\times d}$ and
+$E_{\rm pos}\in\mathbb R^{C\times d}$. For a batch of IDs of shape $(B,T)$,
+\[
+H^{(0)}_{b,t}=E_{\rm tok}[x_{b,t}]+E_{\rm pos}[t],
+\qquad H^{(0)}\in\mathbb R^{B\times T\times d},\quad T\le C.
+\]
+Positions are indexed $0,\ldots,T-1$ in code. Mathematical examples below use
+positions $1,\ldots,T$ when convenient. The position table is learned, rather
+than sinusoidal or rotary, in this GPT-2 architecture.
+\begin{lstlisting}[language=Python]
+tok_emb = nn.Embedding(V, d)
+pos_emb = nn.Embedding(C, d)
+positions = torch.arange(X.shape[1], device=X.device)
+h = tok_emb(X) + pos_emb(positions)  # broadcast over B
+\end{lstlisting}
+
+\begin{studybox}{Check your understanding}
+For stream $[3,1,4,1,5]$ and $T=3$, write the first input and target. Then give
+the embedding output shape when $B=2$ and $d=8$. Explain why an ID must be an
+integer, but an embedding coordinate can change continuously during training.
+\end{studybox}
+
+\section{Causal multi-head self-attention: chapter 3}
+\label{sec:attention}
+
+Attention is a differentiable retrieval operation. A query describes what the
+current position is looking for; keys describe what each memory position can be
+matched on; values contain the information that will be combined. Figure
+\ref{fig:attention-retrieval} separates these roles before introducing the
+special case used by GPT.
+Raschka first computes attention directly from small input vectors, then adds
+learned query, key, and value maps. Follow that order when implementing: verify
+one query and its weights before introducing a batch, a mask, or multiple heads.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  >=Latex,
+  flow/.style={-{Latex[length=2.2mm]},thick,draw=navy},
+  box/.style={draw=navy,rounded corners=2pt,fill=navy!6,
+    minimum height=0.9cm,align=center,font=\small,inner sep=5pt},
+  memory/.style={draw=teal!80!black,rounded corners=2pt,fill=teal!8,
+    minimum height=1.55cm,align=center,font=\small,inner sep=6pt}
+]
+\node[box] (query) at (0,0.85) {$q$\\current query};
+\node[memory] (memory) at (0,-0.85) {memory pairs\\
+  $(k_1,v_1),\ldots,(k_T,v_T)$};
+\node[box] (scores) at (3.8,0.35) {$s_j=qk_j^\top/\sqrt{d_h}$\\match scores};
+\node[box] (weights) at (7.25,0.35) {$\alpha=\softmax(s)$\\nonnegative weights};
+\node[box] (output) at (10.75,0) {$z=\sum_j\alpha_jv_j$\\retrieved context};
+\draw[flow] (query) -- (scores);
+\draw[flow] (memory) -- node[below,font=\scriptsize]{keys} (scores);
+\draw[flow] (scores) -- (weights);
+\draw[flow] (weights) -- (output);
+\draw[flow] (memory.south) to[bend right=22]
+  node[below,font=\scriptsize]{values} (output.south);
+\end{tikzpicture}
+\caption{Attention as soft retrieval. Similarity between the query and each key
+sets the mixture weight on the corresponding value. Queries and memory may come
+from different sources, so attention is not automatically self-attention.}
+\label{fig:attention-retrieval}
+\end{figure}
+
+Let $X\in\mathbb R^{B\times T\times d}$ be a batch of hidden states. We treat
+feature vectors as rows, so matrices multiply on the right. Separate learned
+maps produce $Q,K,V$; the course stores them in one equivalent fused linear
+layer. Reshape the projected width into $H$ heads of width $d_h=d/H$:
+\[
+Q=XW_Q,\qquad K=XW_K,\qquad V=XW_V.
+\]
+Bias terms are omitted in this equation. The course enables them by default;
+the book's initial attention configuration disables them.
+For one head,
+\[
+S=\frac{QK^\top}{\sqrt{d_h}}+M,\qquad
+P=\softmax(S),\qquad A=PV,
+\]
+where $M_{ij}=0$ for $j\le i$ and $M_{ij}=-\infty$ for $j>i$. The scale
+$\sqrt{d_h}$ stabilizes score variance under a simple independence model:
+if coordinates of $q$ and $k$ are independent, mean zero, and variance one,
+then $\operatorname{Var}(qk^\top)=d_h$. Dividing by $\sqrt{d_h}$ gives variance
+one under those assumptions. Learned vectors need not satisfy them exactly.
+Softmax acts across \emph{keys}, the last score dimension. The mask makes the
+model causal. Apply attention-weight dropout during training, mix the values,
+concatenate all heads, and apply the output projection and branch dropout.
+
+In \emph{self-attention}, every query, key, and value is projected from the same
+input sequence $X$. The operation still uses three learned projections because
+matching and content transport are different jobs. Figure
+\ref{fig:self-attention-flow} shows the full tensor path for one head; multiple
+heads repeat this path with different learned subspaces and concatenate their
+outputs.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  >=Latex,
+  flow/.style={-{Latex[length=2.2mm]},thick,draw=navy},
+  box/.style={draw=navy,rounded corners=2pt,fill=navy!6,
+    minimum height=0.82cm,minimum width=2.0cm,align=center,font=\small,inner sep=4pt},
+  projection/.style={draw=teal!80!black,rounded corners=2pt,fill=teal!8,
+    minimum height=0.82cm,minimum width=2.25cm,align=center,font=\small,inner sep=4pt}
+]
+\node[box] (x) at (0,0) {$X$\\token states};
+\node[projection] (q) at (3.1,1.45) {$Q=XW_Q$\\queries};
+\node[projection] (k) at (3.1,0) {$K=XW_K$\\keys};
+\node[projection] (v) at (3.1,-1.45) {$V=XW_V$\\values};
+\node[box] (score) at (6.5,0.72) {$QK^\top/\sqrt{d_h}+M$\\score matrix};
+\node[box] (prob) at (9.95,0.72) {$P=\softmax(S)$\\row-wise weights};
+\node[box] (context) at (13.7,-0.05) {$A=PV$\\one context per token};
+\draw[flow] (x) -- (q);
+\draw[flow] (x) -- (k);
+\draw[flow] (x) -- (v);
+\draw[flow] (q) -- (score);
+\draw[flow] (k) -- (score);
+\draw[flow] (score) -- (prob);
+\draw[flow] (prob) -- (context);
+\draw[flow] (v) -- (context);
+\node[font=\scriptsize,text=teal!60!black,align=center] at (1.35,-2.0)
+  {the same $X$ feeds all three learned projections};
+\end{tikzpicture}
+\caption{Self-attention for one head. The $T\times T$ matrix contains one row
+of attention weights for each query position and one column for each key/value
+position. The weighted values produce a new contextual representation at every
+token position.}
+\label{fig:self-attention-flow}
+\end{figure}
+
+GPT uses \emph{masked self-attention}, more precisely causal self-attention. The
+mask is added to the score matrix before softmax. For query position $i$, keys
+at $j>i$ receive $-\infty$, so their probability is exactly zero. This permits
+parallel teacher-forced training without allowing a position to read its target
+or any later token.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  cell/.style={minimum width=0.82cm,minimum height=0.68cm,
+    anchor=center,draw=white,font=\small},
+  explainer/.style={draw=navy,rounded corners=2pt,fill=navy!5,
+    text width=6.2cm,align=left,font=\small,inner sep=7pt}
+]
+\matrix (mask) [matrix of math nodes,row sep=0pt,column sep=0pt] {
+|[cell,fill=navy!20]| \checkmark & |[cell,fill=coral!20,text=coral!80!black]| \times & |[cell,fill=coral!20,text=coral!80!black]| \times & |[cell,fill=coral!20,text=coral!80!black]| \times & |[cell,fill=coral!20,text=coral!80!black]| \times \\
+|[cell,fill=navy!20]| \checkmark & |[cell,fill=navy!20]| \checkmark & |[cell,fill=coral!20,text=coral!80!black]| \times & |[cell,fill=coral!20,text=coral!80!black]| \times & |[cell,fill=coral!20,text=coral!80!black]| \times \\
+|[cell,fill=navy!20]| \checkmark & |[cell,fill=navy!20]| \checkmark & |[cell,fill=navy!20]| \checkmark & |[cell,fill=coral!20,text=coral!80!black]| \times & |[cell,fill=coral!20,text=coral!80!black]| \times \\
+|[cell,fill=navy!20]| \checkmark & |[cell,fill=navy!20]| \checkmark & |[cell,fill=navy!20]| \checkmark & |[cell,fill=navy!20]| \checkmark & |[cell,fill=coral!20,text=coral!80!black]| \times \\
+|[cell,fill=navy!20]| \checkmark & |[cell,fill=navy!20]| \checkmark & |[cell,fill=navy!20]| \checkmark & |[cell,fill=navy!20]| \checkmark & |[cell,fill=navy!20]| \checkmark \\
+};
+\foreach \j in {1,...,5}
+  \node[above=2pt of mask-1-\j,font=\scriptsize] {$k_{\j}$};
+\foreach \i in {1,...,5}
+  \node[left=3pt of mask-\i-1,font=\scriptsize] {$q_{\i}$};
+\node[above=0.55cm of mask,font=\small\bfseries] {key/value position $j$};
+\node[rotate=90,left=0.78cm of mask,font=\small\bfseries] {query position $i$};
+\node[explainer,right=0.9cm of mask] (legend) {
+  \textcolor{navy}{\textbf{Allowed: $j\le i$}}\\[-1pt]
+  $M_{ij}=0$; the query may use the present and past.\\[5pt]
+  \textcolor{coral!80!black}{\textbf{Blocked: $j>i$}}\\[-1pt]
+  $M_{ij}=-\infty$, hence $P_{ij}=0$ after softmax.\\[5pt]
+  Row $i$ therefore forms a probability distribution only over positions
+  $1,\ldots,i$.
+};
+\end{tikzpicture}
+\caption{The lower-triangular causal mask. Blue cells are visible; coral cells
+are future positions excluded before softmax. The diagonal remains visible so a
+hidden state at position $i$ can represent token $x_i$ while predicting
+$x_{i+1}$.}
+\label{fig:causal-mask}
+\end{figure}
+
+\subsection{A masked row worked by hand}
+Suppose the already-scaled scores for query position $2$ are $[1,2,9]$. The
+third key is in the future, so replace its score by $-\infty$ before softmax:
+\[
+P_{2,:}=\frac{[e^1,e^2,0]}{e^1+e^2}
+\approx[0.268941,0.731059,0].
+\]
+For values $v_1=[2,0]$ and $v_2=[0,4]$, the contextual vector is
+\[
+a_2=0.268941[2,0]+0.731059[0,4]
+\approx[0.537883,2.924234].
+\]
+Softmax followed by zeroing the third probability would leave a row whose
+entries no longer sum to one. Masking first changes the normalization set.
+The row-sum-one invariant applies before dropout or in evaluation mode;
+attention dropout does not preserve each realized row sum during training.
+
+\subsection{Split and merge heads explicitly}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Tensor & Shape & Meaning \\
+\midrule
+$X$ & $B\times T\times d$ & contextual token states \\
+$Q,K,V$ & $B\times H\times T\times d_h$ & per-head projections \\
+$S,P$ & $B\times H\times T\times T$ & causal scores and weights \\
+$A$ & $B\times H\times T\times d_h$ & per-head weighted values \\
+output & $B\times T\times d$ & concatenated, projected result \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The following core uses $H\mid d$. It assumes \texttt{self.qkv} is
+\texttt{nn.Linear(d, 3*d)}. The full attention module also includes dropout
+and the output projection; they are omitted here to isolate the tensor path.
+\begin{lstlisting}[language=Python]
+B, T, d = x.shape
+q, k, v = self.qkv(x).chunk(3, dim=-1)
+def split(z):
+    return z.view(B, T, H, d // H).transpose(1, 2)
+q, k, v = map(split, (q, k, v))
+scores = (q @ k.transpose(-2, -1)) / math.sqrt(d // H)
+keep = torch.ones(T, T, device=x.device).tril().bool()
+weights = scores.masked_fill(~keep, -torch.inf).softmax(-1)
+context = (weights @ v).transpose(1, 2).contiguous()
+context = context.view(B, T, d)
+\end{lstlisting}
+
+The most important unit test changes tokens at positions $j\ge k$ and verifies
+that logits at positions $i<k$ do not change. This is stronger than merely
+checking that the mask has a triangular shape: it tests the behavior of the
+complete model. Put the model in evaluation mode first, so independent dropout
+masks do not obscure the comparison. In the local implementation compare
+\texttt{model(ids).logits}, since forward returns a \texttt{GPTOutput} object.
+
+For one sequence, attention mixing costs $O(T^2d)$ time. Explicit score storage
+has $BHT^2$ entries; projection and MLP computation add terms proportional to
+$BTd^2$. The accelerator presets use $T=256$ (smoke: 64; CPU: 128).
+Production systems use
+fused kernels, longer-context methods, and caching; those
+optimizations remain outside the core model implementation. An optional DDP
+training driver is included as a readable systems extension.
+
+\section{The complete GPT decoder: chapter 4}
+\label{sec:decoder}
+
+Attention supplies context mixing, but a trainable decoder also needs
+normalization, nonlinear feature transformations, and residual paths. Raschka
+builds these components individually before assembling \texttt{GPTModel}.
+
+\subsection{Layer normalization and the feed-forward network}
+For one token vector $h\in\mathbb R^d$, layer normalization computes statistics
+across its $d$ features, not across examples or sequence positions:
+\[
+\mu=\frac1d\sum_{j=1}^d h_j,\quad
+\sigma^2=\frac1d\sum_{j=1}^d(h_j-\mu)^2,\quad
+\operatorname{LN}(h)=\gamma\odot\frac{h-\mu}{\sqrt{\sigma^2+\epsilon}}+\beta.
+\]
+Use population variance and $\epsilon=10^{-5}$. Learned vectors $\gamma,\beta$
+have width $d$. The book spells out the calculation; the local module uses
+\texttt{nn.LayerNorm}. Both expose the same feature-wise operation.
+
+The token-wise multilayer perceptron (MLP) expands width from $d$ to $4d$, applies
+GELU, and returns to width $d$:
+\[
+\operatorname{MLP}(h)=\operatorname{GELU}(hW_1+b_1)W_2+b_2.
+\]
+Here $W_1\in\mathbb R^{d\times4d}$ and $W_2\in\mathbb R^{4d\times d}$;
+\texttt{nn.Linear.weight} stores their transposes. GPT-2 uses the approximation
+\[
+\operatorname{GELU}(u)\approx\tfrac12u\left[1+\tanh\left(
+\sqrt{2/\pi}(u+0.044715u^3)\right)\right],
+\]
+applied coordinate-wise. Attention mixes positions; the same MLP transforms
+features independently at each position. \texttt{nn.GELU(approximate="tanh")}
+implements this choice in the course module.
+
+\subsection{Pre-normalized residual blocks}
+
+Token and learned position embeddings are added:
+\[
+H^{(0)}_{b,t}=E_{\mathrm{tok}}[x_{b,t}]+E_{\mathrm{pos}}[t].
+\]
+Each pre-normalized block is
+\begin{align*}
+U^{(\ell)} &= H^{(\ell-1)}+\operatorname{Attn}
+(\operatorname{LN}(H^{(\ell-1)})),\\
+H^{(\ell)} &= U^{(\ell)}+\operatorname{MLP}
+(\operatorname{LN}(U^{(\ell)})),
+\end{align*}
+where branch dropout is suppressed in the equations. Each branch must return
+shape $(B,T,d)$ so the addition is defined. The derivative of a residual map
+$h+f(h)$ contains $I+J_f(h)$; the identity path helps gradients travel through
+the stack but does not by itself guarantee stable optimization.
+\input{figures/gpt_block.tex}
+
+A final layer normalization follows the stack. A linear output head maps
+$(B,T,d)$ to vocabulary logits $(B,T,V)$; it does not apply softmax in the model
+forward pass. Cross-entropy will combine the needed normalization and logarithm
+stably during training.
+
+The \emph{course} language-model head shares storage with the token embedding matrix. This
+weight tying reduces parameters and makes input/output token geometry interact.
+The course's residual-output projections use a smaller initialization standard deviation,
+$0.02/\sqrt{2L}$, to control variance across $L$ residual blocks.
+
+\subsection{Book model, released GPT-2, and course defaults}
+The book's initial \texttt{GPT\_CONFIG\_124M} names the small GPT-2 model family,
+but its separate output matrix changes the actual parameter count. For
+$V=50{,}257$, $C=1{,}024$, $d=768$, $L=12$, and $H=12$:
+\begin{center}\small
+\begin{tabularx}{\linewidth}{@{}Xrr@{}}
+\toprule
+Configuration & Q/K/V biases & Distinct parameters \\
+\midrule
+Released GPT-2 small, tied input/output weights & yes & $124{,}439{,}808$ \\
+Book's initial chapter-4 model, untied output & no & $163{,}009{,}536$ \\
+\bottomrule
+\end{tabularx}\end{center}
+For the released architecture, one block has $12d^2+13d$ parameters. The total is
+\[
+Vd+Cd+L(12d^2+13d)+2d=124{,}439{,}808.
+\]
+Untying adds $Vd=38{,}597{,}376$ parameters; disabling Q/K/V biases removes
+$3Ld=27{,}648$. At the chapter-5 context length $C=256$, the book model has
+$162{,}419{,}712$ parameters. A short context does not make the vocabulary
+matrices small. Course presets use much smaller widths and vocabularies.
+Copying equal numbers into two matrices is not weight tying: they must share
+the same parameter object to stay tied during optimization.
+
+\begin{studybox}{Two interfaces, the same raw logits}
+The book uses \texttt{logits = model(ids)}. The local course model uses
+\texttt{logits = model(ids).logits}; passing targets also supplies
+\texttt{model(ids, targets).loss}. Neither model shifts targets internally in
+the examples here. Form the shifted labels in the data pipeline exactly once.
+\end{studybox}
+
+\subsection{Before training: shape, causality, and generation checks}
+For $B=2,T=8,d=96,H=4,V=1000$, head tensors have shape $(2,4,8,24)$,
+scores $(2,4,8,8)$, and output logits $(2,8,1000)$. Verify those shapes, finite
+loss and gradients, tied storage if requested, and the future-token invariance
+test. Finally perform greedy generation with random weights: crop the prompt to
+the context limit, take \texttt{argmax} of the last-position logits, append the
+ID, and repeat. The output need not be readable. This checks the mechanics of
+chapter 4.7 before asking whether training improves them.
+
+\subsection*{Code map}
+\begin{itemize}
+\item \texttt{tokenization.py}: bytes, BPE ranks, encoding, decoding, serialization.
+\item \texttt{model.py}: attention, feed-forward network, block, GPT, bigram baseline.
+\item \texttt{data.py}: book cleaning, token streams, SFT and preference packing.
+\item \texttt{training.py}: device resolution, AdamW groups, schedule, loops, checkpoints.
+\item \texttt{distributed.py}: process groups, DDP wrapping, metric reduction, rank-0 saving.
+\item \texttt{posttraining.py}: reward head, preference loss, KL rewards, GAE, PPO.
+\item \texttt{experiments/llm/}: stage-specific, readable command-line drivers.
+\end{itemize}
+
+\input{pretraining.tex}
+
+\section{Course extension: data, leakage, and the public-book experiment}
+\label{sec:corpus}
+
+The downloader obtains English text records from Project Gutenberg's official
+weekly compressed CSV catalog rather than a fixed title list. It removes the
+separate homework title and normalized-title duplicates, randomly samples the
+requested N works, and assigns about 10\% to validation as whole books. Thus an
+evaluation window cannot be the next paragraph after a training window from the
+same file.
+
+Selection is also cache-aware. Nonempty files already named
+\texttt{raw/books/pg<ID>.txt} are shuffled ahead of missing candidates. Raising
+\texttt{--book-limit} from $N$ to $M$ needs $M-N$ new successful downloads when
+there are exactly $N$ usable, eligible cached books. Larger caches or changes in
+catalog eligibility can change that number. Selected nonempty cached files are
+not downloaded again. This cache-first policy is randomized, but is not uniform
+sampling from the entire eligible catalog on every invocation.
+There is no hard-coded upper cap: the limit must be at least two and no larger
+than the eligible population in the current catalog.
+
+The manifest records the generated or user-supplied random seed, cached catalog
+SHA-256, exact active selection and whole-book split, reuse/download counts,
+resolved archive URLs, and hashes. Preparation reads that manifest and writes
+token arrays one book at a time. New payloads use a registered high-speed
+mirror's text files or archives with a two-second delay; bulk automation must not
+target the human-facing site. A private or authorized mirror URL template can be
+supplied for very large collections.
+
+Each downloader run assigns a new active selection and split. Preserve the
+manifest and processed streams for the duration of an experiment rather than
+rerunning selection midway through training. About 10\% of \emph{books} held
+out does not imply 10\% of tokens: lengths vary substantially. The tokenizer is
+fitted on a character-limited prefix of the training-book iterator in manifest
+order. Downloading 10,000 books therefore does not automatically expose BPE
+fitting to all of them. Choose and record the tokenizer character budget.
+
+Preparation joins each split's books with end-of-text tokens. Random training
+windows may cross a book boundary within one split, but never cross the separate
+training and validation streams. The current binary format stores unsigned
+16-bit IDs, so its vocabulary must fit that representation. Arbitrarily large
+book counts do not imply arbitrarily large token IDs.
+
+\begin{figure}[H]\centering
+\includegraphics[width=0.96\linewidth]{corpus_tokens.png}
+\caption{Earlier 16-book measurement; validation books were held out from tokenizer and model training.}
+\end{figure}
+
+The archived 16-book snapshot is English fiction with historical language and
+outdated social assumptions. A new, much larger catalog selection need not have
+the same genre composition, so inspect its manifest rather than inheriting that
+description. Neither selection is automatically representative of contemporary
+general-language use. The data route is
+chosen for reproducibility, public accessibility, and scale appropriate for a
+classroom accelerator -- not because it is an ethically or statistically ideal
+foundation-model corpus.
+
+\subsection{The bigram baseline and controlled comparisons}
+The course baseline learns a logit row for each current token:
+\[
+p(x_{t+1}=j\mid x_t=i)=[\softmax(B_{i,:})]_j.
+\]
+It cannot use earlier context. Compare it with the decoder using the same
+tokenizer, held-out documents, scoring rule, and declared training budget. If
+the decoder does not improve held-out loss, investigate the implementation and
+budget before attributing benefit to attention. This is a proposed comparison,
+not a claimed result of the archived 30-update run.
+
+\section{Course extension: optimization and hardware}
+\label{sec:hardware}
+
+The first chapter-5 loop needs none of the following additions. Raschka's
+Appendix D introduces warmup, cosine decay, and gradient clipping after the
+basic loop works. The course then adds accumulation, CUDA mixed precision,
+checkpoint guards, and an optional distributed driver.
+
+The course groups matrix parameters (weight decay) separately from bias and
+normalization vectors (no decay). This is a parameter-group choice, not an
+automatic behavior of AdamW. It uses moment coefficients $(0.9,0.95)$, whereas
+the book's minimal constructor uses PyTorch's default $(0.9,0.999)$.
+With zero-based optimizer update index $s$, total budget $S$, and warmup length
+$s_w<S$, the implemented schedule is
+\[
+\eta_s=\begin{cases}
+\eta_{\max}(s+1)/s_w,&0\le s<s_w,\\
+\eta_{\min}+\tfrac12(\eta_{\max}-\eta_{\min})
+\left[1+\cos\left(\pi\frac{s-s_w}{S-s_w}\right)\right],&s_w\le s<S.
+\end{cases}
+\]
+When $s_w=0$, use only the cosine branch. The last executed index is $S-1$;
+the minimum is the schedule's endpoint at $S$. Divide each microbatch mean loss
+by accumulation count $A$ before backpropagation, then clip and update once
+after $A$ equal-size microbatches. This gives the gradient of their average loss.
+It is not generally bitwise identical to a larger physical batch with dropout.
+
+The loop clips the total gradient norm, evaluates a fixed \emph{number} of fresh
+random validation batches, saves best and periodic checkpoints, and raises on
+nonfinite training or evaluation \emph{losses}. It does not explicitly reject
+every nonfinite gradient before an update. The logged gradient norm is the norm
+before clipping. \texttt{auto} selects CUDA, then
+Apple MPS, then CPU. Explicit unavailable accelerators raise an error.
+Only CUDA uses autocast in the current driver; FP16 gradient scaling is also
+CUDA-only. Selecting a non-FP32 setting alone does not enable MPS mixed precision.
+
+The default driver uses one device. The optional distributed driver is launched
+by \texttt{torchrun}, which supplies a global rank, local rank, and world size.
+Each process selects CUDA device \texttt{LOCAL\_RANK}, constructs one complete
+model replica, and draws different token windows using a rank-offset seed. DDP
+broadcasts the initial parameters and averages gradients across workers. During
+gradient accumulation, \texttt{no\_sync()} defers communication until the final
+microbatch. Validation losses are averaged with an all-reduce, while only rank
+zero prints and writes checkpoints. Thus
+\[
+B_{\rm effective}=B_{\rm worker}\times A\times W,
+\]
+where $A$ is the accumulation count and $W$ the number of workers. DDP is data
+parallelism, not model sharding: every GPU must fit the full parameters,
+optimizer state, and its local activations. MPS remains single-device; the
+multi-GPU classroom route uses CUDA with NCCL.
+
+The token-position budget is $S\,B_{\rm worker}\,A\,W\,T$. These are prediction
+events consumed by updates, including repeated sampled windows. They are not
+unique tokens and do not certify a full corpus pass. The single-device driver
+uses random starts with replacement rather than DataLoader epochs.
+
+\begin{figure}[H]\centering
+\includegraphics[width=0.75\linewidth]{preset_parameters.png}
+\caption{Exact parameter counts at vocabulary size 512. Parameter count alone
+does not predict training time; sequence length, batch, kernel support, and device matter.}
+\end{figure}
+
+The MPS preset is six layers, six heads, width 384, context 256, batch 16, and
+6,000 updates: $24{,}576{,}000$ token positions at accumulation one. Vocabulary
+size changes its parameter count; the figure's counts assume $V=512$.
+Rather than promise a runtime, time 100 updates \emph{after} the 200-update
+warmup on the actual machine and extrapolate, allowing for evaluation and saving.
+The CLI's \texttt{--steps} changes only the total update budget: an MPS run with
+\texttt{--steps 100} remains inside warmup.
+Apple MPS performance varies by PyTorch/macOS version and memory pressure. Colab
+GPU type is not fixed across sessions.
+
+\begin{studybox}{Current reproducibility boundary}
+Seed before model construction when designing a controlled experiment. The
+current single-device pretraining driver constructs its GPT before the training
+helper sets the global seed. Its preset seed therefore controls later training
+randomness and batch generators, but does not guarantee identical initial
+weights across fresh invocations. The minimal loop above should be called only
+after deliberate initialization seeding. The CLI also has no exact-resume path;
+use a fresh checkpoint root for each run and record its configuration.
+\end{studybox}
+
+\section{Course extension: decoding and tokenizer contracts}
+
+At each step, crop to the last $T_{\max}$ tokens, compute the final-position
+logits $z$, divide by temperature $\tau$, optionally keep only the top $k$, and
+sample:
+\[
+p_i=[\softmax(z/\tau)]_i,\qquad x_{t+1}\sim\operatorname{Categorical}(p).
+\]
+Low temperature concentrates mass; high temperature flattens the distribution
+before truncation. Whether a change improves text quality is empirical.
+Top-$k$ truncation removes the long tail but can also suppress rare valid
+tokens. Report the prompt, seed, temperature, truncation rule, and checkpoint.
+Never present one appealing sample as a distributional evaluation.
+
+The generation CLI now draws a fresh 32-bit seed for each unseeded invocation
+and prints it to standard error. Repeated commands therefore use fresh random
+streams by default, though they may still generate identical text. Pass
+\texttt{--seed 2026} for controlled repeats in the same environment; bitwise
+identity across devices and software versions is not guaranteed.
+Temperature changes the probabilities but does not mathematically
+guarantee that one finite draw differs from another; seed controls the random
+draw, while temperature controls its distribution.
+
+Generation must also respect the tokenizer boundary. Let $V_{\rm tok}$ be the
+actual tokenizer size and $V_{\rm model}$ the number of model output rows. The
+valid next-token distribution is
+\[
+p_i=\softmax\!\left(z_{0:V_{\rm tok}}/\tau\right)_i,
+\qquad 0\le i<V_{\rm tok}\le V_{\rm model}.
+\]
+The implementation slices logits before top-$k$ and sampling, so intentionally
+padded rows cannot be drawn. New checkpoints also record the tokenizer size and
+SHA-256. A conflicting tokenizer file raises an early error; use
+\texttt{--tokenizer data/llm/processed/tokenizer.json} to select the exact file
+used for training rather than hiding a stale sidecar as padding.
+The training drivers stage this tokenizer beside the checkpoints before the
+first update and refuse to mix existing checkpoints with a different tokenizer.
+When changing BPE settings, select a fresh checkpoint root or output directory.
+
+Legacy checkpoints without a stored tokenizer hash cannot automatically detect
+every wrong same-size mapping. A matching vocabulary size alone is insufficient.
+Never repair a mapping mismatch by silently dropping or replacing generated IDs.
+
+The archived 30-update public-book smoke checkpoint produced mostly
+character-like noise even though held-out loss fell from 6.207 after update 1
+to 5.126 after update 30. These are not measurements of the user's later
+10,000-book run. This is expected and useful:
+optimization correctness is a necessary condition for language learning, not a
+sufficient condition.
+
+\clearpage
+\part{Post-training extensions}
+\section{Supervised instruction fine-tuning}
+
+The remaining lessons keep the original course's SFT, reward-model, and PPO
+material. They are not prerequisites of chapters 2--5. Raschka's chapter 7
+provides a next reading on instruction fine-tuning; the Dolly data, assistant-only
+loss choice, HH-RLHF preferences, and PPO implementation below are course
+extensions rather than a description of the book's pretraining experiment.
+
+A base model learns continuation, not the social convention ``answer the user.''
+SFT formats each Dolly record as system text, user instruction and optional
+context, then assistant response. Labels are shifted by one token, but prompt and
+padding positions are set to $-100$, PyTorch's ignored target:
+\[
+\mathcal L_{\mathrm{SFT}}
+=-\frac{1}{\sum_t m_t}\sum_t m_t
+\log p_\theta(y_t\mid x,y_{<t}),
+\quad m_t=\mathbf{1}\{t\text{ is assistant response}\}.
+\]
+Assistant-only masking concentrates this objective on response tokens.
+Training on prompt tokens is another possible objective, not automatically a
+bug, but long prompts then receive substantial weight. State the choice and
+inspect the labels rather than interpreting every decrease as better answering.
+
+Dolly 15k is human-authored and licensed CC BY-SA 3.0, but it is neither a truth
+oracle nor a safety benchmark. Some answers are incomplete or wrong, contexts
+can come from Wikipedia, and annotator demographics shape the distribution.
+Evaluation should include a held-out split by record, task-category summaries,
+response length, exact formatting checks, and human review.
+
+\section{Pairwise reward modeling}
+
+HH-RLHF provides conversations with a chosen and rejected answer. A reward model
+uses the SFT GPT backbone and maps the final non-padding hidden state to a scalar
+$r_\phi(x,y)$. Under the Bradley--Terry model,
+\[
+P(y^+\succ y^-\mid x)=\sigma(r_\phi(x,y^+)-r_\phi(x,y^-)),
+\]
+so the pair loss is $-\log\sigma(r^+-r^-)$. Pair accuracy is intuitive but can
+hide calibration and distribution shift. Rewards are identifiable only up to an
+additive constant; only differences matter for the likelihood.
+
+HH-RLHF's harmless subset intentionally includes harmful prompts, slurs, unsafe
+instructions, and rejected harmful answers. It is suitable for a controlled
+safety lesson, not unfiltered projection or casual browsing. Dataset preferences
+also reflect a particular policy and period; they do not define universal human
+values.
+
+\section{PPO-style RLHF}
+
+The RL loop treats the prompt as initial state, generated tokens as actions, and
+the reward-model score as a terminal reward. A frozen reference policy penalizes
+drift. For sampled action $a_t$,
+\[
+r_t^{\mathrm{KL}}=-\beta\left[
+\log\pi_\theta(a_t\mid s_t)-\log\pi_{\mathrm{ref}}(a_t\mid s_t)\right].
+\]
+Add the scalar reward-model score to the final generated action. This sampled log
+ratio is a Monte Carlo contribution to forward KL; it is not the exact full-
+vocabulary KL at every state.
+
+Given values $V_t$, temporal-difference residuals and GAE are
+\begin{align*}
+\delta_t &= r_t+\gamma V_{t+1}-V_t,\\
+\hat A_t &= \delta_t+\gamma\lambda\hat A_{t+1},\\
+\hat R_t &= \hat A_t+V_t.
+\end{align*}
+With ratio $\rho_t=\exp(\log\pi_\theta-\log\pi_{\mathrm{old}})$, PPO minimizes the
+negative clipped surrogate plus clipped value error and an entropy bonus:
+\[
+\mathcal L_{\mathrm{policy}}=-\E_t\min\left(
+\rho_t\hat A_t,
+\operatorname{clip}(\rho_t,1-\epsilon,1+\epsilon)\hat A_t
+\right).
+\]
+
+The code masks prompt and padding positions in every RL term. It logs mean reward,
+approximate KL, policy loss, value loss, and clip fraction. A rising learned
+reward with worsening human judgment is reward hacking, not success. Stop or
+retune when KL spikes, response length collapses, phrases repeat, or held-out
+human preference declines.
+
+\section{Measured evidence and interpretation}
+\begin{figure}[H]\centering
+\includegraphics[width=0.98\linewidth]{training_evidence.png}
+\caption{Left: genuine held-out-book pretraining. Right: synthetic correctness
+checks whose losses have different semantics and must not be compared across stages.}
+\end{figure}
+
+The integrated CPU smoke run verifies all stages. The tiny GPT held-out loss falls
+from 5.655 to 4.404; assistant-only SFT loss falls from 4.503 to 3.258; pairwise
+reward loss falls from 0.717 to 0.159 on four pairs; PPO policy and value gradients
+are finite. The reward model obtains 100\% accuracy on those same four pairs,
+which demonstrates deliberate overfitting in a unit-sized test, not generalization.
+
+\clearpage
+\section{Failure modes and audit checklist}
+\begin{longtable}{@{}P{0.24\linewidth}P{0.34\linewidth}P{0.34\linewidth}@{}}
+\toprule
+Symptom & Likely cause & Check or response \\
+\midrule
+\endhead
+Unexpectedly strong validation on near-duplicates & possible document or tokenizer leakage & audit duplicates and split before windows; similar losses alone are not proof \\
+Past logits change when future tokens change & missing/misaligned causal mask & behavioral causality unit test \\
+SFT loss falls but answers do not improve & prompt tokens dominate & inspect $-100$ labels and token counts \\
+Reward accuracy is high only on train & memorization or template cue & held-out prompts and source split \\
+Reward rises, language degrades & reward hacking & human audit, KL limit, stop run \\
+PPO KL explodes & learning rate or reward scale too large & lower rate/reward, raise KL penalty \\
+MPS out of memory & context/batch too large & lower batch; accumulate gradients \\
+One sample looks excellent & selection bias & fixed prompt suite and distributional metrics \\
+Every command emits the same sample & fixed seed, greedy decoding, or concentrated probabilities & inspect seed, temperature, top-$k$, and logits \\
+Decoder reports an out-of-vocabulary ID & padded head or wrong tokenizer sidecar & mask to actual size; verify size/hash or pass \texttt{--tokenizer} \\
+\bottomrule
+\end{longtable}
+
+Before making a claim, record data revision and license, tokenizer hash, model
+configuration, seed, device, token budget, checkpoint, held-out protocol,
+generation settings, failure examples, and the exact population to which the
+claim is intended to generalize.
+
+\section{Reproducible lab commands}
+Use the existing prepared corpus if available. In particular, do not redownload
+or retokenize a 10,000-book corpus merely to follow this lesson. Confirm that
+\texttt{data/llm/processed/} contains \texttt{tokenizer.json},
+\texttt{metadata.json}, \texttt{train.bin}, and \texttt{validation.bin}.
+The metadata supplies the actual vocabulary size. These commands use a fresh
+checkpoint root so the lecture exercise does not replace an earlier run.
+\begin{lstlisting}[language=bash]
+uv sync --locked --extra llm
+make test-llm
+
+# First verify the complete pipeline with a short run.
+uv run --extra llm python -m experiments.llm.pretrain \
+  --preset smoke --steps 30 --device auto \
+  --checkpoint-root checkpoints/llm-lecture-revision
+
+# Then choose a larger budget after measuring the actual hardware.
+uv run --extra llm python -m experiments.llm.pretrain \
+  --preset mps --device auto \
+  --checkpoint-root checkpoints/llm-lecture-revision
+
+# Omit --seed for a fresh reported seed; retain it for controlled repeats.
+uv run --extra llm python -m experiments.llm.generate \
+  checkpoints/llm-lecture-revision/pretrain-mps/best.pt \
+  --prompt "Once upon a time" --temperature 0.8 --top-k 40 --seed 2026
+\end{lstlisting}
+
+Students without prepared data can use a separate small directory:
+\begin{lstlisting}[language=bash]
+uv run --extra llm python -m experiments.llm.download_data \
+  --dataset books --data-root data/llm-lecture-revision \
+  --book-limit 16 --selection-seed 2026
+
+uv run --extra llm python -m experiments.llm.prepare_data \
+  --data-root data/llm-lecture-revision --tokenizer bpe \
+  --vocab-size 512 --tokenizer-characters 500000
+\end{lstlisting}
+For this directory, add \texttt{--data-root data/llm-lecture-revision} to the
+pretraining command. A larger book limit and tokenizer budget are independent
+choices. Use another checkpoint root when changing tokenizer settings.
+
+The later stages use separate data preparation for Dolly and HH-RLHF. Consult
+\texttt{docs/topics/llm.md} before the commands below. They are optional
+post-training labs, not steps required for the chapter-5 exercise.
+\begin{lstlisting}[language=bash]
+# Optional CUDA data parallelism: one process per GPU.
+uv run --extra llm torchrun --standalone --nproc_per_node=2 \
+  -m experiments.llm.pretrain_distributed --preset colab --device cuda \
+  --checkpoint-root checkpoints/llm-lecture-ddp
+
+uv run --extra llm python -m experiments.llm.sft \
+  checkpoints/llm-lecture-revision/pretrain-mps/best.pt --device auto \
+  --output-dir checkpoints/llm-lecture-revision/sft
+
+uv run --extra llm python -m experiments.llm.reward_modeling \
+  checkpoints/llm-lecture-revision/sft/sft.pt --device auto \
+  --output-dir checkpoints/llm-lecture-revision/reward
+
+uv run --extra llm python -m experiments.llm.ppo \
+  checkpoints/llm-lecture-revision/sft/sft.pt \
+  checkpoints/llm-lecture-revision/reward/reward_model.pt --device auto \
+  --output-dir checkpoints/llm-lecture-revision/ppo
+\end{lstlisting}
+
+\section{References and data records}
+\subsection*{Primary reading and exact chapter code}
+Sebastian Raschka, \emph{Build a Large Language Model (From Scratch)}, Manning,
+2024, ISBN 9781633437166.
+\href{https://www.manning.com/books/build-a-large-language-model-from-scratch}{Publisher page}.
+The pretraining narrative follows the official chapter notebooks, with original
+course explanations and condensed code examples. No book figures are reproduced.
+\begin{itemize}
+\item Chapter 2, especially sections 2.5--2.8:
+\booklink{ch02/01_main-chapter-code/ch02.ipynb}{tokenization, shifted batches, embeddings}.
+\item Chapter 3, sections 3.3--3.6:
+\booklink{ch03/01_main-chapter-code/ch03.ipynb}{attention, masking, multiple heads}.
+\item Chapter 4, sections 4.2--4.7:
+\booklink{ch04/01_main-chapter-code/ch04.ipynb}{decoder components and generation};
+\booklink{ch04/01_main-chapter-code/gpt.py}{compact GPT source}.
+\item Chapter 5, sections 5.1--5.4:
+\booklink{ch05/01_main-chapter-code/ch05.ipynb}{loss, training, sampling, saving};
+\booklink{ch05/01_main-chapter-code/gpt_train.py}{training-script companion}.
+Section 5.5's external weight-loading exercise is separate from random-initialized pretraining.
+\item Appendix D:
+\booklink{appendix-D/01_main-chapter-code/appendix-D.ipynb}{warmup, cosine decay, clipping}.
+\item Chapter 7:
+\booklink{ch07/01_main-chapter-code/ch07.ipynb}{optional instruction-tuning reading}.
+\item Edith Wharton, \emph{The Verdict}:
+\href{https://raw.githubusercontent.com/rasbt/LLMs-from-scratch/f49cad747931fe6af0a7d2802cd480d1c1a0ec8e/ch02/01_main-chapter-code/the-verdict.txt}{exact pinned raw-text download}.
+\end{itemize}
+
+\subsection*{Architecture, post-training, and data provenance}
+\begin{itemize}
+\item Sennrich, Haddow, and Birch (2016), BPE for subword units: \url{https://aclanthology.org/P16-1162/}.
+\item Vaswani et al. (2017), Transformer attention: \url{https://arxiv.org/abs/1706.03762}.
+\item Radford et al. (2019), GPT-2 report: \url{https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf}.
+\item Ouyang et al. (2022), instruction following with human feedback: \url{https://arxiv.org/abs/2203.02155}.
+\item Schulman et al. (2017), PPO: \url{https://arxiv.org/abs/1707.06347}.
+\item Bai et al. (2022), helpful and harmless assistant: \url{https://arxiv.org/abs/2204.05862}.
+\item Released GPT-2 architecture source:
+\url{https://github.com/openai/gpt-2/blob/master/src/model.py}.
+\item Karpathy, nanoGPT teaching and performance reference: \url{https://github.com/karpathy/nanoGPT}.
+\item Project Gutenberg terms and permission: \url{https://www.gutenberg.org/policy/terms_of_use.html} and \url{https://www.gutenberg.org/policy/permission}.
+\item Project Gutenberg official catalog and robot guidance: \url{https://www.gutenberg.org/ebooks/offline_catalogs.html} and \url{https://www.gutenberg.org/policy/robot_access.html}.
+\item PyTorch documentation: \href{https://docs.pytorch.org/docs/stable/generated/torch.nn.parallel.DistributedDataParallel.html}{DistributedDataParallel} and \href{https://docs.pytorch.org/docs/stable/elastic/run.html}{\texttt{torchrun}}.
+\item Exact item IDs, revisions, URLs, licenses, and checksums: \texttt{data/llm/sources.json} and the generated \texttt{data/llm/download\_manifest.json}.
+\end{itemize}
+
+\end{document}

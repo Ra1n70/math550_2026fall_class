@@ -1,0 +1,65 @@
+{
+  "project_gutenberg": {
+    "catalog": "https://www.gutenberg.org/",
+    "terms": "https://www.gutenberg.org/policy/terms_of_use.html",
+    "permission": "https://www.gutenberg.org/policy/permission",
+    "license_note": "Books are selected at run time from Project Gutenberg's official catalog and retain their item-level license. Project Gutenberg warns non-U.S. users to check local law. The downloader records the exact catalog snapshot hash, random seed, selected books, resolved archive URL, and SHA-256 for every retrieved file.",
+    "homework_book": {"id": 35, "title": "The Time Machine", "author": "H. G. Wells"},
+    "catalog_selection": {
+      "metadata_page": "https://www.gutenberg.org/ebooks/offline_catalogs.html",
+      "csv_gzip_url": "https://www.gutenberg.org/cache/epub/feeds/pg_catalog.csv.gz",
+      "robot_access_guidance": "https://www.gutenberg.org/policy/robot_access.html",
+      "terms_of_use": "https://www.gutenberg.org/policy/terms_of_use.html",
+      "mirror_guidance": "https://www.gutenberg.org/help/mirroring.html",
+      "registered_mirror_list": "https://www.gutenberg.org/MIRRORS.ALL",
+      "default_download_mirror": "https://gutenberg.pglaf.org/ (Project Gutenberg, San Diego; listed as a high-speed mirror)",
+      "robot_harvest_txt_en": "https://www.gutenberg.org/robot/harvest?filetypes[]=txt&langs[]=en",
+      "selection_version": 2,
+      "default_book_limit": 16,
+      "validation_fraction": 0.1,
+      "sampling": "random without replacement, preferring already cached eligible books before new mirror downloads",
+      "filters": {
+        "Type": "Text",
+        "Language": "en",
+        "exclude": "the homework book and duplicate normalized titles"
+      },
+      "subject_markers": [],
+      "request_delay_seconds": 2.0
+    },
+    "url_templates": {
+      "catalog_page": "https://www.gutenberg.org/ebooks/{id}",
+      "text_archives": [
+        {
+          "url": "https://gutenberg.pglaf.org/cache/epub/{id}/pg{id}.txt",
+          "encoding": "utf-8"
+        },
+        {
+          "url": "https://gutenberg.pglaf.org/{id_path}{id}/{id}.zip",
+          "encoding": "utf-8"
+        },
+        {
+          "url": "https://gutenberg.pglaf.org/{id_path}{id}/{id}-8.zip",
+          "encoding": "latin-1"
+        }
+      ]
+    }
+  },
+  "sft": {
+    "name": "databricks/databricks-dolly-15k",
+    "dataset_card": "https://huggingface.co/datasets/databricks/databricks-dolly-15k",
+    "revision": "bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a",
+    "download_url": "https://huggingface.co/datasets/databricks/databricks-dolly-15k/resolve/bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a/databricks-dolly-15k.jsonl",
+    "sha256": "2df9083338b4abd6bceb5635764dab5d833b393b55759dffb0959b6fcbf794ec",
+    "license": "CC BY-SA 3.0",
+    "records": 15011
+  },
+  "preference": {
+    "name": "Anthropic/hh-rlhf harmless-base",
+    "dataset_card": "https://huggingface.co/datasets/Anthropic/hh-rlhf",
+    "revision": "09be8c5bbc57cb3887f3a9732ad6aa7ec602a1fa",
+    "download_url": "https://huggingface.co/datasets/Anthropic/hh-rlhf/resolve/09be8c5bbc57cb3887f3a9732ad6aa7ec602a1fa/harmless-base/train.jsonl.gz",
+    "sha256": "bf3e1ecd3db61bf21d190f69351d26670c67aababa0fd282fa008c17a7202217",
+    "license": "MIT",
+    "content_warning": "This preference set intentionally contains harmful prompts and unsafe rejected answers. Keep it out of student-facing displays and inspect samples only in a controlled setting."
+  }
+}

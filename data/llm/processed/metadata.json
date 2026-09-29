@@ -1,0 +1,154 @@
+{
+  "tokenizer": "bpe",
+  "vocab_size": 512,
+  "tokenizer_training_characters": 500000,
+  "split_policy": "whole books; tokenizer trained on training books only",
+  "streams": {
+    "train": {
+      "path": "data/llm/processed/train.bin",
+      "tokens": 7929826,
+      "dtype": "uint16",
+      "minimum_id": 9,
+      "maximum_id": 511,
+      "bytes": 15859652
+    },
+    "validation": {
+      "path": "data/llm/processed/validation.bin",
+      "tokens": 2921627,
+      "dtype": "uint16",
+      "minimum_id": 10,
+      "maximum_id": 511,
+      "bytes": 5843254
+    }
+  },
+  "books": [
+    {
+      "id": 11,
+      "title": "Alice's Adventures in Wonderland",
+      "split": "train",
+      "utf8_bytes": 151025,
+      "tokens": 86462,
+      "bytes_per_token": 1.746721102912262
+    },
+    {
+      "id": 84,
+      "title": "Frankenstein; Or, The Modern Prometheus",
+      "split": "train",
+      "utf8_bytes": 421388,
+      "tokens": 247967,
+      "bytes_per_token": 1.699371287308392
+    },
+    {
+      "id": 98,
+      "title": "A Tale of Two Cities",
+      "split": "train",
+      "utf8_bytes": 771305,
+      "tokens": 457235,
+      "bytes_per_token": 1.6868896738001247
+    },
+    {
+      "id": 1342,
+      "title": "Pride and Prejudice",
+      "split": "train",
+      "utf8_bytes": 737465,
+      "tokens": 429011,
+      "bytes_per_token": 1.718988557402957
+    },
+    {
+      "id": 1400,
+      "title": "Great Expectations",
+      "split": "train",
+      "utf8_bytes": 1017755,
+      "tokens": 604427,
+      "bytes_per_token": 1.6838344415454638
+    },
+    {
+      "id": 1661,
+      "title": "The Adventures of Sherlock Holmes",
+      "split": "train",
+      "utf8_bytes": 575729,
+      "tokens": 341665,
+      "bytes_per_token": 1.6850687076522324
+    },
+    {
+      "id": 2701,
+      "title": "Moby-Dick; Or, The Whale",
+      "split": "train",
+      "utf8_bytes": 1234292,
+      "tokens": 750648,
+      "bytes_per_token": 1.6443019897475248
+    },
+    {
+      "id": 345,
+      "title": "Dracula",
+      "split": "train",
+      "utf8_bytes": 854860,
+      "tokens": 515454,
+      "bytes_per_token": 1.6584603087763408
+    },
+    {
+      "id": 1260,
+      "title": "Jane Eyre: An Autobiography",
+      "split": "train",
+      "utf8_bytes": 1043777,
+      "tokens": 623676,
+      "bytes_per_token": 1.6735885299418287
+    },
+    {
+      "id": 768,
+      "title": "Wuthering Heights",
+      "split": "train",
+      "utf8_bytes": 661563,
+      "tokens": 393206,
+      "bytes_per_token": 1.6824844992192387
+    },
+    {
+      "id": 174,
+      "title": "Treasure Island",
+      "split": "train",
+      "utf8_bytes": 437364,
+      "tokens": 261660,
+      "bytes_per_token": 1.67149736299014
+    },
+    {
+      "id": 74,
+      "title": "The Adventures of Tom Sawyer",
+      "split": "train",
+      "utf8_bytes": 405473,
+      "tokens": 242189,
+      "bytes_per_token": 1.6742007275309778
+    },
+    {
+      "id": 1184,
+      "title": "The Count of Monte Cristo",
+      "split": "train",
+      "utf8_bytes": 2704801,
+      "tokens": 1587824,
+      "bytes_per_token": 1.7034639859329497
+    },
+    {
+      "id": 996,
+      "title": "Don Quixote",
+      "split": "train",
+      "utf8_bytes": 2327000,
+      "tokens": 1388402,
+      "bytes_per_token": 1.676027548217303
+    },
+    {
+      "id": 2600,
+      "title": "War and Peace",
+      "split": "validation",
+      "utf8_bytes": 3272441,
+      "tokens": 1950178,
+      "bytes_per_token": 1.678021698532134
+    },
+    {
+      "id": 4300,
+      "title": "Ulysses",
+      "split": "validation",
+      "utf8_bytes": 1533593,
+      "tokens": 971449,
+      "bytes_per_token": 1.5786654780642113
+    }
+  ]
+}

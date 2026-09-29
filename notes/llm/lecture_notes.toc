@@ -1,0 +1,42 @@
+\contentsline {section}{\numberline {1}Learning route and scope}{3}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Book-to-course map}{3}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Nine-unit course map}{4}{subsection.1.2}%
+\contentsline {part}{I\hspace {1em}The book-aligned pretraining path}{5}{part.1}%
+\contentsline {section}{\numberline {2}Text, training windows, and embeddings: chapter 2}{5}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Token IDs are not token vectors}{5}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Course extension: learning byte-pair merges}{5}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}One-token shifts create the training targets}{6}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Token lookup plus position lookup}{6}{subsection.2.4}%
+\contentsline {section}{\numberline {3}Causal multi-head self-attention: chapter 3}{7}{section.3}%
+\contentsline {subsection}{\numberline {3.1}A masked row worked by hand}{8}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Split and merge heads explicitly}{9}{subsection.3.2}%
+\contentsline {section}{\numberline {4}The complete GPT decoder: chapter 4}{9}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Layer normalization and the feed-forward network}{9}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Pre-normalized residual blocks}{10}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Book model, released GPT-2, and course defaults}{11}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Before training: shape, causality, and generation checks}{11}{subsection.4.4}%
+\contentsline {section}{\numberline {5}Pretraining: loss and evaluation, chapter 5.1}{12}{section.5}%
+\contentsline {subsection}{\numberline {5.1}From a sequence probability to a trainable loss}{12}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Logits, target probability, and cross-entropy}{13}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}What perplexity measures}{14}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}The book's small corpus and split}{14}{subsection.5.4}%
+\contentsline {subsection}{\numberline {5.5}Evaluation must change both mode and gradient tracking}{14}{subsection.5.5}%
+\contentsline {section}{\numberline {6}Pretraining: the first training loop, chapter 5.2}{15}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Start with one device and one optimizer step per batch}{15}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Reading training curves without overclaiming}{16}{subsection.6.2}%
+\contentsline {section}{\numberline {7}From a checkpoint to text: chapters 5.3--5.4}{17}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Greedy decoding, temperature, and top-k}{17}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Saving weights versus resuming training}{17}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}The boundary of ``from scratch''}{18}{subsection.7.3}%
+\contentsline {section}{\numberline {8}Course extension: data, leakage, and the public-book experiment}{18}{section.8}%
+\contentsline {subsection}{\numberline {8.1}The bigram baseline and controlled comparisons}{19}{subsection.8.1}%
+\contentsline {section}{\numberline {9}Course extension: optimization and hardware}{19}{section.9}%
+\contentsline {section}{\numberline {10}Course extension: decoding and tokenizer contracts}{21}{section.10}%
+\contentsline {part}{II\hspace {1em}Post-training extensions}{22}{part.2}%
+\contentsline {section}{\numberline {11}Supervised instruction fine-tuning}{22}{section.11}%
+\contentsline {section}{\numberline {12}Pairwise reward modeling}{22}{section.12}%
+\contentsline {section}{\numberline {13}PPO-style RLHF}{22}{section.13}%
+\contentsline {section}{\numberline {14}Measured evidence and interpretation}{23}{section.14}%
+\contentsline {section}{\numberline {15}Failure modes and audit checklist}{24}{section.15}%
+\contentsline {section}{\numberline {16}Reproducible lab commands}{24}{section.16}%
+\contentsline {section}{\numberline {17}References and data records}{26}{section.17}%

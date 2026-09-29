@@ -1,0 +1,318 @@
+% Core chapter-5 teaching sequence, included by lecture_notes.tex.
+\section{Pretraining: loss and evaluation, chapter 5.1}
+\label{sec:pretraining-loss}
+
+\begin{studybox}{What pretraining changes}
+Start with randomly initialized model weights and a fixed tokenizer. The model
+learns to predict the next token from observed prefixes of ordinary text. It
+does not receive instruction/answer pairs, preference labels, or a reward model.
+The targets come from shifting the text itself. A trained tokenizer and a
+trained language model are separate artifacts.
+\end{studybox}
+
+\input{figures/pretraining_flow.tex}
+
+\subsection{From a sequence probability to a trainable loss}
+The probability chain rule is exact:
+\[
+p(x_1,\ldots,x_T)=\prod_{t=1}^{T}p(x_t\mid x_{<t}).
+\]
+The model approximates these conditional distributions using a finite context
+and shared parameters $\theta$. A training input window $(x_1,\ldots,x_T)$ has
+labels $(x_2,\ldots,x_{T+1})$. For its observed next tokens, maximizing the
+product of conditional probabilities is equivalent to maximizing their summed
+logarithms, hence to minimizing negative log-likelihood:
+\begin{align*}
+\arg\max_\theta\prod_{b,t}p_\theta(y_{bt}\mid x_{b,\le t})
+&=\arg\max_\theta\sum_{b,t}\log p_\theta(y_{bt}\mid x_{b,\le t}),\\
+\mathcal L_{\rm LM}(\theta)
+&=-\frac{1}{BT}\sum_{b=1}^{B}\sum_{t=1}^{T}
+\log p_\theta(y_{bt}\mid x_{b,\le t}).
+\end{align*}
+In these full-length pretraining windows every target contributes. Later, padding
+or assistant-only training replaces $BT$ by the number of included targets and
+omits masked terms. Such loss masks are different from the attention mask.
+
+Training uses \emph{teacher forcing}: each position sees the observed earlier
+tokens even if the model would have generated something else. All positions
+can be evaluated in parallel because causal attention blocks future inputs.
+Generation instead appends the model's own selected tokens. Errors may then
+change the prefixes encountered later in the rollout.
+
+\subsection{Logits, target probability, and cross-entropy}
+Let $z_{btj}$ be the raw logit for vocabulary item $j$. For one target ID $y$,
+\[
+p_j=\frac{e^{z_j}}{\sum_{k=0}^{V-1}e^{z_k}},\qquad
+\ell(z,y)=-\log p_y
+=\log\left(\sum_{k=0}^{V-1}e^{z_k}\right)-z_y.
+\]
+The last expression connects the next-token objective to cross-entropy against
+the one-hot target distribution. Implement the combined operation with
+\texttt{cross\_entropy}; do not explicitly exponentiate large logits, take a
+logarithm of a rounded probability, or pass softmax probabilities to that API.
+
+For example, if the model assigns its three correct next tokens probabilities
+$1/2$, $1/4$, and $1/8$, their mean loss is
+\[
+-\tfrac13\left(\log\tfrac12+\log\tfrac14+\log\tfrac18\right)
+=\log4\approx1.3863.
+\]
+This is a constructed numerical example, not a measured training result.
+For a single logit vector the derivative is
+\[
+\frac{\partial\ell}{\partial z_j}=p_j-\mathbf1\{j=y\}.
+\]
+Thus gradient descent increases the correct token's score relative to the
+others, while backpropagation adjusts every upstream component that contributed
+to these logits. Autograd performs this chain rule; it does not choose targets,
+the loss, or the optimizer for us.
+
+\begin{lstlisting}[language=Python]
+import torch
+from torch.nn import functional as F
+
+def loss_batch(model, x, y):
+    logits = model(x).logits  # book: logits = model(x)
+    # logits: (B, T, V), y: (B, T), integer next-token IDs
+    return F.cross_entropy(logits.flatten(0, 1), y.flatten())
+\end{lstlisting}
+The flattening creates $BT$ classification events over $V$ classes. It does
+not mix time steps within a target and does not shift labels. A second shift
+here would train the wrong prediction task.
+
+\subsection{What perplexity measures}
+For natural-log loss, $\operatorname{PPL}=\exp(\mathcal L)$. The example above
+has perplexity $4$, the inverse geometric mean of the three correct-token
+probabilities. A uniform predictor has loss $\log V$ and perplexity $V$.
+A randomly initialized network need not be exactly uniform.
+
+Perplexity is not accuracy and does not count the literal number of plausible
+words. It depends on token boundaries, the held-out text, the context policy,
+and which targets are scored. Compare it only under the same evaluation
+protocol. Mean token loss should be exponentiated once; averaging per-batch
+perplexities is a different quantity.
+
+\subsection{The book's small corpus and split}
+Raschka's chapter-5 example uses Edith Wharton's short story \emph{The Verdict}.
+The exact course-reading download source is the pinned
+\booklink{ch02/01_main-chapter-code/the-verdict.txt}{repository text file};
+the raw endpoint is linked in the source records at the end of these notes.
+The demonstration divides the raw text at 90\% of its character length,
+tokenizes the two pieces separately with the fixed GPT-2 tokenizer, and then
+constructs windows. This prevents overlapping windows from crossing the split,
+but the two sets still come from the same story. It is not a held-out-author
+or held-out-book generalization experiment.
+
+The chapter-5 notebook uses context length and stride $256$, batch size $2$,
+training shuffle enabled, and incomplete training batches dropped. Validation
+does not shuffle and does not drop the last batch. An epoch is one pass through
+the resulting training loader, not one pass through every possible overlapping
+window or every possible prefix length.
+
+\subsection{Evaluation must change both mode and gradient tracking}
+\texttt{model.eval()} disables dropout; it does not disable autograd.
+\texttt{torch.no\_grad()} disables graph recording; it does not disable dropout.
+Use both to measure loss with fixed model parameters and deterministic network
+layers. Restore the previous mode afterward.
+
+The book's \texttt{calc\_loss\_loader} averages batch means over at most
+\texttt{eval\_iter} batches. That is an exact token mean when batches contain
+the same number of scored targets. The following original course adaptation
+weights by token count so an incomplete final batch is handled correctly.
+It assumes dense pretraining labels, with no padding or ignored targets.
+
+\begin{lstlisting}[language=Python]
+@torch.no_grad()
+def evaluate(model, loader, device, max_batches=None):
+    was_training = model.training
+    model.eval()
+    total_nll, total_tokens = 0.0, 0
+    try:
+        for i, (x, y) in enumerate(loader):
+            if max_batches is not None and i >= max_batches:
+                break
+            x, y = x.to(device), y.to(device)
+            logits = model(x).logits  # book: model(x)
+            total_nll += F.cross_entropy(
+                logits.flatten(0, 1), y.flatten(),
+                reduction="sum").item()
+            total_tokens += y.numel()
+    finally:
+        model.train(was_training)
+    if total_tokens == 0:
+        raise ValueError("No validation targets were scored")
+    return total_nll / total_tokens
+\end{lstlisting}
+
+When \texttt{max\_batches=5}, five is a maximum, not a guarantee. In the book's
+short-story example the validation loader is smaller than that. Partial-loader
+or sampled-window evaluation is a useful progress estimate, but must not be
+reported as an exhaustive corpus evaluation. Reusing validation to choose
+hyperparameters makes it a model-selection set; reserve a separate test set for
+a final claim.
+
+\section{Pretraining: the first training loop, chapter 5.2}
+\label{sec:basic-loop}
+
+\subsection{Start with one device and one optimizer step per batch}
+The first loop should expose the essential computation before adding a schedule,
+mixed precision, gradient accumulation, or multiple GPUs:
+\begin{enumerate}
+\item Obtain integer inputs $X$ and already-shifted targets $Y$.
+\item Compute raw logits and the mean cross-entropy.
+\item Clear old gradients, backpropagate this batch's loss, and update parameters.
+\item Periodically evaluate and record the number of processed token positions.
+\item Inspect continuations from a fixed prompt after each epoch.
+\end{enumerate}
+Clearing gradients is necessary because PyTorch accumulates them by default.
+\texttt{backward()} computes gradients but does not change parameter values;
+\texttt{optimizer.step()} makes the update. For plain gradient descent this is
+$\theta\leftarrow\theta-\eta\nabla\mathcal L$. AdamW additionally tracks first
+and second gradient moments and applies decoupled weight decay.
+
+The \emph{chapter notebook} uses AdamW with learning rate $4\times10^{-4}$,
+weight decay $0.1$, ten epochs, and evaluation every five updates using at most
+five batches per loader. It seeds PyTorch before constructing the model.
+The compact \texttt{gpt\_train.py} summary uses different defaults
+($5\times10^{-4}$ and one evaluation batch); do not mix those settings and call
+the result the notebook experiment. The original short-story setup has a large
+model relative to its data and intentionally exposes overfitting.
+
+\begin{lstlisting}[language=Python]
+def train_basic(model, train_loader, val_loader, device,
+                epochs=10, eval_every=5):
+    model.to(device)
+    optimizer = torch.optim.AdamW(
+        model.parameters(), lr=4e-4, weight_decay=0.1)
+    history, tokens_seen, updates = [], 0, 0
+    for epoch in range(epochs):
+        model.train()
+        for x, y in train_loader:
+            x, y = x.to(device), y.to(device)
+            optimizer.zero_grad(set_to_none=True)
+            loss = loss_batch(model, x, y)
+            if not torch.isfinite(loss):
+                raise RuntimeError("Non-finite training loss")
+            loss.backward()
+            optimizer.step()
+            tokens_seen += y.numel()
+            updates += 1
+            if updates == 1 or updates % eval_every == 0:
+                train_nll = evaluate(model, train_loader,
+                                     device, max_batches=5)
+                val_nll = evaluate(model, val_loader,
+                                   device, max_batches=5)
+                history.append((updates, tokens_seen,
+                                train_nll, val_nll))
+        # Inspect a fixed-prompt continuation here; see below.
+    return history, optimizer
+\end{lstlisting}
+This is an original condensed loop with the course \texttt{GPTOutput} interface,
+not a verbatim copy of the book. It uses one-based update numbers; the book's
+zero-based \texttt{global\_step=0} already follows its first optimizer update.
+For a fresh run, set the seed \emph{before} creating the model, loaders, and
+optimizer. An evaluation before the loop is useful as a genuine untrained
+baseline. Calling the first post-update measurement ``initial loss'' would
+confuse these two points in time.
+
+\subsection{Reading training curves without overclaiming}
+Compare train and validation loss with dropout disabled and the same scoring
+convention. Falling train loss with rising held-out loss is evidence of
+overfitting under that protocol. Similar losses can be entirely healthy; they
+do not alone prove leakage. A nearly constant loss may reflect an incorrect
+target shift, missing updates, unsuitable learning rate, or too little training.
+Inspect these mechanisms before scaling the model.
+
+The course's \emph{production-style driver} logs the just-used training batches
+with dropout before an update, and evaluates sampled validation batches without
+dropout after it. Those two logged values are not a clean matched estimate of
+the generalization gap. Its validation batches also change over time. Use a
+fixed held-out scoring protocol for comparisons that need finer precision.
+
+\begin{studybox}{A useful small experiment}
+Overfit one small batch to test whether the network and optimizer can reduce
+its loss. Then evaluate on text never used for updates. Success on the repeated
+batch is a correctness diagnostic, not generalization evidence. Compare several
+fixed-prompt continuations, not only the most fluent one. Keep the tokenizer,
+prompt, context length, and decoding settings fixed across checkpoints.
+\end{studybox}
+
+\section{From a checkpoint to text: chapters 5.3--5.4}
+\label{sec:book-generation}
+
+\subsection{Greedy decoding, temperature, and top-k}
+For a prompt of length $t$, run the last $\min(t,C)$ IDs through the decoder.
+The vector \texttt{logits[:, -1, :]} predicts the next ID. Select that ID, append
+it, and repeat. Earlier output positions are useful for parallel training but
+do not predict the next token after the entire current prompt.
+
+Greedy decoding chooses $\arg\max_j z_j$. For $\tau>0$, temperature sampling uses
+\[
+p_j=[\softmax(z/\tau)]_j,\qquad
+x_{t+1}\sim\operatorname{Categorical}(p).
+\]
+Lower temperature concentrates probability and higher temperature flattens it.
+Changing a positive temperature cannot change the greedy argmax ordering.
+It can change a sampled sequence, but does not guarantee a different realized
+draw. Top-$k$ keeps the largest $k$ scores and masks the rest before normalizing.
+At $k=1$ this is effectively greedy when the maximum is unique.
+
+\begin{lstlisting}[language=Python]
+@torch.no_grad()
+def sample_next(model, ids, context_size, vocab_size,
+                temperature=1.0, top_k=40):
+    if temperature <= 0:
+        raise ValueError("Use argmax for greedy decoding")
+    if not 1 <= top_k <= vocab_size:
+        raise ValueError("top_k must be within the vocabulary")
+    if vocab_size > model.config.vocab_size:
+        raise ValueError("Tokenizer is larger than the model")
+    was_training = model.training
+    model.eval()
+    try:
+        z = model(ids[:, -context_size:]).logits[:, -1, :]
+        z = z[:, :vocab_size] / temperature
+        values, indices = torch.topk(z, top_k, dim=-1)
+        filtered = torch.full_like(z, -torch.inf)
+        filtered.scatter_(1, indices, values)
+        return torch.multinomial(filtered.softmax(-1), 1)
+    finally:
+        model.train(was_training)
+\end{lstlisting}
+This course-interface snippet selects one token; call it repeatedly and
+concatenate its return value along dimension 1. It intentionally recomputes the
+cropped context and has no key/value cache. It assumes a nonempty prompt,
+$1\le\texttt{context\_size}\le C$, valid input IDs, and finite logits. The
+full CLI additionally handles checkpoint/tokenizer validation and stopping.
+Released GPT-2 token IDs cannot be substituted for the course tokenizer's IDs.
+
+\subsection{Saving weights versus resuming training}
+Chapter 5.4 first saves and reloads \texttt{model.state\_dict()}, then includes
+optimizer state for continued training. Reconstruct the same model configuration
+before loading its weights. For inference, select evaluation mode and pair it
+with the exact tokenizer. Loading only weights and creating a new optimizer is
+a fresh optimizer trajectory, even if the parameter values are unchanged.
+
+A course checkpoint records configuration, model state, optimizer state, update
+number, and metadata including the tokenizer identity. It does \emph{not} yet
+provide exact restart: the current pretraining CLI has no resume option and its
+payload omits RNG, batch-generator, and GradScaler states. An exact-resume
+implementation would also restore the schedule position and data-order state.
+Only load checkpoint files from a trusted source because general serialized
+PyTorch payloads can execute code when deserialized.
+
+\subsection{The boundary of ``from scratch''}
+Chapter 5.5 separately demonstrates loading released OpenAI GPT-2 weights.
+That is a useful architecture-compatibility exercise, not a result obtained by
+training on \emph{The Verdict}. The course's pretraining exercise starts from
+random weights and does not require that step. Similarly, useful instruction
+following is a later objective rather than an automatic consequence of a
+working next-token training loop.
+
+\begin{studybox}{Pretraining checkpoint questions}
+Can you explain every dimension from input IDs to loss? Why must masking occur
+before softmax? Why does \texttt{eval()} not replace \texttt{no\_grad()}?
+What is counted by ``tokens seen''? What would make two perplexities comparable?
+Which states would you restore to resume training exactly? Answer these before
+adding the larger-corpus and hardware extensions in the next sections.
+\end{studybox}

@@ -1,0 +1,57 @@
+{
+  "source": "notes/llm/pretraining.tex",
+  "source_sha256": "de68ee89e6cf6e0d1a67d8a93876ff57c6bfdcbbc4aa1b4f2a7dd39a89eedaac",
+  "checked_at_utc": "2026-09-29T04:16:01.156251+00:00",
+  "versions": {
+    "python": "3.13.9",
+    "torch": "2.13.0",
+    "platform": "macOS-15.0.1-arm64-arm-64bit-Mach-O"
+  },
+  "seeds": {
+    "checks_and_sampling": 2026,
+    "repeated_batch_training": 550
+  },
+  "extracted_python_listings": 4,
+  "device": "cpu",
+  "model_config": {
+    "vocab_size": 32,
+    "block_size": 8,
+    "n_layer": 1,
+    "n_head": 2,
+    "n_embd": 16,
+    "dropout": 0.1,
+    "bias": true,
+    "tie_embeddings": true
+  },
+  "parameter_count": 3952,
+  "manual_nll": 3.5024755001068115,
+  "unequal_batch_token_weighted_nll": 3.502475632561578,
+  "incorrect_unweighted_batch_nll_for_comparison": 3.4921568632125854,
+  "sampling_draws": 64,
+  "sampling_distinct_ids": [
+    4,
+    10,
+    13,
+    25
+  ],
+  "sampling_allowed_ids": [
+    4,
+    10,
+    13,
+    25
+  ],
+  "repeated_batch_updates": 120,
+  "repeated_batch_tokens_seen": 1440,
+  "repeated_batch_before_nll": 3.5072453816731772,
+  "repeated_batch_after_nll": 2.2633082071940103,
+  "checks": [
+    "loss_batch equals manually gathered log-softmax NLL",
+    "evaluate weights 12+6 targets correctly and respects max_batches",
+    "evaluate/sample_next disable dropout and autograd and restore both modes",
+    "exception paths also restore the prior model mode",
+    "sample_next crops context, restricts valid IDs/top-k, validates settings",
+    "changing future tokens leaves earlier logits unchanged",
+    "train_basic reduces repeated-batch loss with finite records and exact token counts"
+  ],
+  "scope": "Numerical tests of exact lecture listings on synthetic CPU tensors; no public-data or language-quality claim."
+}

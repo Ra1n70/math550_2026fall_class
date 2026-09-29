@@ -8,6 +8,7 @@ Requires-Dist: numpy<3,>=2.0
 Requires-Dist: pandas>=2.3.3
 Requires-Dist: scikit-learn>=1.9.0
 Requires-Dist: scipy>=1.17.1
+Requires-Dist: tiktoken>=0.14.0
 Requires-Dist: torch>=2.13.0
 Requires-Dist: torchvision>=0.28.0
 Provides-Extra: tabular
@@ -46,3 +47,9 @@ Requires-Dist: pandas<3,>=2.2; extra == "evaluation"
 Requires-Dist: peft<1,>=0.15; extra == "evaluation"
 Requires-Dist: torch<3,>=2.8; extra == "evaluation"
 Requires-Dist: transformers<5,>=4.51; extra == "evaluation"
+Provides-Extra: final-project
+Requires-Dist: matplotlib<4,>=3.9; extra == "final-project"
+Requires-Dist: pandas<3,>=2.2; extra == "final-project"
+Requires-Dist: peft<1,>=0.15; extra == "final-project"
+Requires-Dist: torch<3,>=2.8; extra == "final-project"
+Requires-Dist: transformers<5,>=4.51; extra == "final-project"

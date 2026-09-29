@@ -2,6 +2,7 @@ README.md
 pyproject.toml
 src/math550/__init__.py
 src/math550/core/__init__.py
+src/math550/core/alignment.py
 src/math550/core/numerics.py
 src/math550/topics/__init__.py
 src/math550/topics/evaluation/__init__.py
@@ -11,6 +12,11 @@ src/math550/topics/evaluation/data.py
 src/math550/topics/evaluation/judges.py
 src/math550/topics/evaluation/metrics.py
 src/math550/topics/evaluation/statistics.py
+src/math550/topics/final_project/__init__.py
+src/math550/topics/final_project/allocation.py
+src/math550/topics/final_project/data.py
+src/math550/topics/final_project/evaluation.py
+src/math550/topics/final_project/validation.py
 src/math550/topics/generative/__init__.py
 src/math550/topics/generative/data.py
 src/math550/topics/generative/evaluation.py
@@ -23,6 +29,7 @@ src/math550/topics/generative/models/image_flow.py
 src/math550/topics/generative/models/neural.py
 src/math550/topics/generative/models/normalizing_flow.py
 src/math550/topics/generative/models/tutorial_flow.py
+src/math550/topics/generative/models/vae.py
 src/math550/topics/gnn/__init__.py
 src/math550/topics/gnn/data.py
 src/math550/topics/gnn/devices.py

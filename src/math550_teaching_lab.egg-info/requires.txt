@@ -3,10 +3,18 @@ numpy<3,>=2.0
 pandas>=2.3.3
 scikit-learn>=1.9.0
 scipy>=1.17.1
+tiktoken>=0.14.0
 torch>=2.13.0
 torchvision>=0.28.0
 
 [evaluation]
+matplotlib<4,>=3.9
+pandas<3,>=2.2
+peft<1,>=0.15
+torch<3,>=2.8
+transformers<5,>=4.51
+
+[final-project]
 matplotlib<4,>=3.9
 pandas<3,>=2.2
 peft<1,>=0.15

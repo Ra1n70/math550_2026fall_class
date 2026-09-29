@@ -1,0 +1,47 @@
+{
+  "verification_scope": "fast synthetic CPU smoke run; not the full public-data benchmark",
+  "device": "cpu",
+  "elapsed_seconds": 1.0727863310021348,
+  "tokenizer": {
+    "kind": "byte_bpe",
+    "vocab_size": 300,
+    "round_trip_exact": true,
+    "training_tokens": 40199,
+    "validation_tokens": 8459
+  },
+  "gpt": {
+    "parameter_count": 123392,
+    "block_size": 64,
+    "layers": 2,
+    "heads": 2,
+    "embedding_width": 64,
+    "initial_validation_loss": 5.655174891153972,
+    "final_validation_loss": 4.404348691304524,
+    "final_validation_perplexity": 81.80584463030853
+  },
+  "bigram_baseline": {
+    "initial_validation_loss": 6.498117923736572,
+    "final_validation_loss": 4.99941234588623
+  },
+  "sft": {
+    "assistant_only_initial_loss": 4.502963542938232,
+    "assistant_only_final_loss": 3.2580251693725586,
+    "last_training_epoch_loss": 3.3500983715057373,
+    "examples": 4
+  },
+  "reward_model": {
+    "initial_preference_loss": 0.7170312404632568,
+    "final_preference_loss": 0.15967068076133728,
+    "training_preference_accuracy": 1.0,
+    "pairs": 4
+  },
+  "ppo_objective": {
+    "finite": true,
+    "total": 0.09002707898616791,
+    "policy": 1.2020269934964745e-07,
+    "value": 0.1800539195537567,
+    "approximate_kl": 0.00045000005047768354,
+    "policy_gradient_finite": true,
+    "value_gradient_finite": true
+  }
+}

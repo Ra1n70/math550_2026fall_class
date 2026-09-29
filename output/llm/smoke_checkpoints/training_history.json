@@ -1,0 +1,42 @@
+[
+  {
+    "step": 1,
+    "train_loss": 5.715775012969971,
+    "validation_loss": 5.655174891153972,
+    "validation_perplexity": 285.76645638173346,
+    "learning_rate": 0.0003333333333333333,
+    "gradient_norm": 2.3697702884674072,
+    "elapsed_seconds": 0.1015098899952136,
+    "device": "cpu"
+  },
+  {
+    "step": 10,
+    "train_loss": 4.972897529602051,
+    "validation_loss": 4.917940775553386,
+    "validation_perplexity": 136.72078433016975,
+    "learning_rate": 0.00089471999940354,
+    "gradient_norm": 1.5733387470245361,
+    "elapsed_seconds": 0.15561136399628595,
+    "device": "cpu"
+  },
+  {
+    "step": 20,
+    "train_loss": 4.493836402893066,
+    "validation_loss": 4.529697418212891,
+    "validation_perplexity": 92.73049827679083,
+    "learning_rate": 0.0004209385452800095,
+    "gradient_norm": 1.5171217918395996,
+    "elapsed_seconds": 0.21038669599511195,
+    "device": "cpu"
+  },
+  {
+    "step": 30,
+    "train_loss": 4.347835540771484,
+    "validation_loss": 4.404348691304524,
+    "validation_perplexity": 81.80584463030853,
+    "learning_rate": 0.00010304273901612565,
+    "gradient_norm": 1.5344922542572021,
+    "elapsed_seconds": 0.2642426009988412,
+    "device": "cpu"
+  }
+]

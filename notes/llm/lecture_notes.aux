@@ -1,0 +1,91 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyperFirstAtBeginDocument{\AtBeginDocument}
+\HyperFirstAtBeginDocument{\ifx\hyper@anchor\@undefined
+\global\let\oldcontentsline\contentsline
+\gdef\contentsline#1#2#3#4{\oldcontentsline{#1}{#2}{#3}}
+\global\let\oldnewlabel\newlabel
+\gdef\newlabel#1#2{\newlabelxx{#1}#2}
+\gdef\newlabelxx#1#2#3#4#5#6{\oldnewlabel{#1}{{#2}{#3}}}
+\AtEndDocument{\ifx\hyper@anchor\@undefined
+\let\contentsline\oldcontentsline
+\let\newlabel\oldnewlabel
+\fi}
+\fi}
+\global\let\hyper@last\relax 
+\gdef\HyperFirstAtBeginDocument#1{#1}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Learning route and scope}{3}{section.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.1}Book-to-course map}{3}{subsection.1.1}\protected@file@percent }
+\gdef \LT@i {\LT@entry 
+    {1}{30.79007pt}\LT@entry 
+    {1}{116.11526pt}\LT@entry 
+    {1}{220.22298pt}\LT@entry 
+    {1}{110.11526pt}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.2}Nine-unit course map}{4}{subsection.1.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {part}{I\hspace  {1em}The book-aligned pretraining path}{5}{part.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {2}Text, training windows, and embeddings: chapter 2}{5}{section.2}\protected@file@percent }
+\newlabel{sec:text}{{2}{5}{Text, training windows, and embeddings: chapter 2}{section.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Token IDs are not token vectors}{5}{subsection.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Course extension: learning byte-pair merges}{5}{subsection.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}One-token shifts create the training targets}{6}{subsection.2.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Token lookup plus position lookup}{6}{subsection.2.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}Causal multi-head self-attention: chapter 3}{7}{section.3}\protected@file@percent }
+\newlabel{sec:attention}{{3}{7}{Causal multi-head self-attention: chapter 3}{section.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Attention as soft retrieval. Similarity between the query and each key sets the mixture weight on the corresponding value. Queries and memory may come from different sources, so attention is not automatically self-attention.}}{7}{figure.1}\protected@file@percent }
+\newlabel{fig:attention-retrieval}{{1}{7}{Attention as soft retrieval. Similarity between the query and each key sets the mixture weight on the corresponding value. Queries and memory may come from different sources, so attention is not automatically self-attention}{figure.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Self-attention for one head. The $T\times T$ matrix contains one row of attention weights for each query position and one column for each key/value position. The weighted values produce a new contextual representation at every token position.}}{8}{figure.2}\protected@file@percent }
+\newlabel{fig:self-attention-flow}{{2}{8}{Self-attention for one head. The $T\times T$ matrix contains one row of attention weights for each query position and one column for each key/value position. The weighted values produce a new contextual representation at every token position}{figure.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces The lower-triangular causal mask. Blue cells are visible; coral cells are future positions excluded before softmax. The diagonal remains visible so a hidden state at position $i$ can represent token $x_i$ while predicting $x_{i+1}$.}}{8}{figure.3}\protected@file@percent }
+\newlabel{fig:causal-mask}{{3}{8}{The lower-triangular causal mask. Blue cells are visible; coral cells are future positions excluded before softmax. The diagonal remains visible so a hidden state at position $i$ can represent token $x_i$ while predicting $x_{i+1}$}{figure.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}A masked row worked by hand}{8}{subsection.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Split and merge heads explicitly}{9}{subsection.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4}The complete GPT decoder: chapter 4}{9}{section.4}\protected@file@percent }
+\newlabel{sec:decoder}{{4}{9}{The complete GPT decoder: chapter 4}{section.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Layer normalization and the feed-forward network}{9}{subsection.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Pre-normalized residual blocks}{10}{subsection.4.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces One GPT decoder block with normalization before each branch (pre-LayerNorm). The first residual addition produces $U=X+\operatorname  {Drop}(\operatorname  {Attn}(\operatorname  {LN}_1(X)))$. The second produces $Y=U+\operatorname  {Drop}(\operatorname  {MLP}(\operatorname  {LN}_2(U)))$. The two bypasses therefore carry different states, $X$ and $U$. Dropout is active during training and disabled during evaluation.}}{10}{figure.4}\protected@file@percent }
+\newlabel{fig:gpt-block}{{4}{10}{One GPT decoder block with normalization before each branch (pre-LayerNorm). The first residual addition produces $U=X+\operatorname {Drop}(\operatorname {Attn}(\operatorname {LN}_1(X)))$. The second produces $Y=U+\operatorname {Drop}(\operatorname {MLP}(\operatorname {LN}_2(U)))$. The two bypasses therefore carry different states, $X$ and $U$. Dropout is active during training and disabled during evaluation}{figure.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Book model, released GPT-2, and course defaults}{11}{subsection.4.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Before training: shape, causality, and generation checks}{11}{subsection.4.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5}Pretraining: loss and evaluation, chapter 5.1}{12}{section.5}\protected@file@percent }
+\newlabel{sec:pretraining-loss}{{5}{12}{Pretraining: loss and evaluation, chapter 5.1}{section.5}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces The pretraining data and optimization paths. Split the corpus before forming overlapping windows, tokenize each split with the same fixed tokenizer, and shift each window by one position to obtain input IDs $x$ and target IDs $y$. Cross-entropy (CE) compares the logits with the targets. Only the training branch computes gradients and updates parameters. Validation uses the same current parameters in evaluation mode, with dropout disabled and no gradient recording. If the tokenizer is learned from the course corpus, fit it only on the training split.}}{12}{figure.5}\protected@file@percent }
+\newlabel{fig:pretraining-flow}{{5}{12}{The pretraining data and optimization paths. Split the corpus before forming overlapping windows, tokenize each split with the same fixed tokenizer, and shift each window by one position to obtain input IDs $x$ and target IDs $y$. Cross-entropy (CE) compares the logits with the targets. Only the training branch computes gradients and updates parameters. Validation uses the same current parameters in evaluation mode, with dropout disabled and no gradient recording. If the tokenizer is learned from the course corpus, fit it only on the training split}{figure.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}From a sequence probability to a trainable loss}{12}{subsection.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Logits, target probability, and cross-entropy}{13}{subsection.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}What perplexity measures}{14}{subsection.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}The book's small corpus and split}{14}{subsection.5.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.5}Evaluation must change both mode and gradient tracking}{14}{subsection.5.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}Pretraining: the first training loop, chapter 5.2}{15}{section.6}\protected@file@percent }
+\newlabel{sec:basic-loop}{{6}{15}{Pretraining: the first training loop, chapter 5.2}{section.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Start with one device and one optimizer step per batch}{15}{subsection.6.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Reading training curves without overclaiming}{16}{subsection.6.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {7}From a checkpoint to text: chapters 5.3--5.4}{17}{section.7}\protected@file@percent }
+\newlabel{sec:book-generation}{{7}{17}{From a checkpoint to text: chapters 5.3--5.4}{section.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.1}Greedy decoding, temperature, and top-k}{17}{subsection.7.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.2}Saving weights versus resuming training}{17}{subsection.7.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.3}The boundary of ``from scratch''}{18}{subsection.7.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {8}Course extension: data, leakage, and the public-book experiment}{18}{section.8}\protected@file@percent }
+\newlabel{sec:corpus}{{8}{18}{Course extension: data, leakage, and the public-book experiment}{section.8}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Earlier 16-book measurement; validation books were held out from tokenizer and model training.}}{19}{figure.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.1}The bigram baseline and controlled comparisons}{19}{subsection.8.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {9}Course extension: optimization and hardware}{19}{section.9}\protected@file@percent }
+\newlabel{sec:hardware}{{9}{19}{Course extension: optimization and hardware}{section.9}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Exact parameter counts at vocabulary size 512. Parameter count alone does not predict training time; sequence length, batch, kernel support, and device matter.}}{20}{figure.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {10}Course extension: decoding and tokenizer contracts}{21}{section.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {part}{II\hspace  {1em}Post-training extensions}{22}{part.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {11}Supervised instruction fine-tuning}{22}{section.11}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {12}Pairwise reward modeling}{22}{section.12}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {13}PPO-style RLHF}{22}{section.13}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {14}Measured evidence and interpretation}{23}{section.14}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Left: genuine held-out-book pretraining. Right: synthetic correctness checks whose losses have different semantics and must not be compared across stages.}}{23}{figure.8}\protected@file@percent }
+\gdef \LT@ii {\LT@entry 
+    {1}{124.9878pt}\LT@entry 
+    {1}{180.56038pt}\LT@entry 
+    {1}{174.56038pt}}
+\@writefile{toc}{\contentsline {section}{\numberline {15}Failure modes and audit checklist}{24}{section.15}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {16}Reproducible lab commands}{24}{section.16}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {17}References and data records}{26}{section.17}\protected@file@percent }
+\gdef \@abspage@last{26}
