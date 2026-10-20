@@ -1,0 +1,154 @@
+{
+  "topic": "reinforcement",
+  "quick": false,
+  "seed": 550,
+  "requested_device": "auto",
+  "torch_version": "2.13.0",
+  "python_version": "3.13.9",
+  "minatar": {
+    "name": "MinAtar Breakout",
+    "version": "1.0.15",
+    "source_url": "https://github.com/kenjyoung/MinAtar",
+    "paper_url": "https://arxiv.org/abs/1903.03176",
+    "license": "GPL-3.0",
+    "observation": "10 x 10 x 4 binary object channels",
+    "actions": "6-action set used in the MinAtar paper"
+  },
+  "optional_full_atari_dataset": {
+    "dataset_id": "atari/breakout/expert-v0",
+    "source_url": "https://minari.farama.org/main/datasets/atari/breakout/expert-v0/",
+    "download_command": "uv run --extra rl-data minari download atari/breakout/expert-v0",
+    "steps": 23075,
+    "episodes": 10,
+    "observation_shape": [
+      210,
+      160,
+      3
+    ],
+    "collection_policy": "CleanRL PPO-Impala expert policy"
+  },
+  "gridworld": {
+    "episodes": 1500,
+    "last_100_mean_return": 0.6255999999999999,
+    "greedy_path_length": 8,
+    "greedy_reaches_goal": true,
+    "greedy_path": [
+      [
+        4,
+        0
+      ],
+      [
+        3,
+        0
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        0,
+        3
+      ],
+      [
+        0,
+        4
+      ]
+    ]
+  },
+  "dqn": {
+    "steps": 500000,
+    "gradient_updates": 495001,
+    "completed_training_episodes": 9228,
+    "training_seconds": 5078.842356000096,
+    "steps_per_second": 98.44763136018679,
+    "device": "mps",
+    "replay_size": 100000,
+    "replay_allocated_mb": 81.3,
+    "trained_evaluation_mean": 11.966666666666667,
+    "trained_evaluation_standard_error": 1.561375265689358,
+    "random_evaluation_mean": 0.5333333333333333,
+    "random_evaluation_standard_error": 0.1495843538850339,
+    "checkpoint": "output/reinforcement/checkpoints/minatar_breakout_double_dqn.pt",
+    "interpretation": "This is a single-seed teaching run; publishable claims require multiple seeds."
+  },
+  "policy_gradient": {
+    "algorithm": "PPO for MinAtar; outcome-supervision GRPO objective demo",
+    "steps": 200000,
+    "gradient_updates": 3112,
+    "completed_training_episodes": 5114,
+    "training_seconds": 60.232326624915004,
+    "steps_per_second": 3320.4760833075693,
+    "device": "mps",
+    "trained_evaluation_mean": 4.766666666666667,
+    "trained_evaluation_standard_error": 0.2567853136727403,
+    "random_evaluation_mean": 0.3333333333333333,
+    "random_evaluation_standard_error": 0.09980824526939037,
+    "last_policy_loss": -0.08826860785484314,
+    "last_value_loss": 0.015916572883725166,
+    "last_entropy": 1.1496869325637817,
+    "last_approximate_kl": 0.013274048455059528,
+    "last_clip_fraction": 0.28125,
+    "last_explained_variance": 0.9581303596496582,
+    "grpo_demo": {
+      "group_rewards": [
+        [
+          0.0,
+          1.0,
+          3.0,
+          2.0
+        ],
+        [
+          4.0,
+          4.0,
+          4.0,
+          4.0
+        ]
+      ],
+      "group_advantages": [
+        [
+          -1.3416407108306885,
+          -0.4472135901451111,
+          1.3416407108306885,
+          0.4472135901451111
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "total_loss": 0.0007492266595363617,
+      "positive_kl_estimate": 0.018730759620666504
+    },
+    "checkpoint": "output/reinforcement/checkpoints/minatar_breakout_ppo.pt",
+    "interpretation": "This is a single-seed teaching run; stable comparisons require multiple seeds."
+  },
+  "alpha_zero": {
+    "iterations": 12,
+    "games_per_iteration": 30,
+    "simulations_per_move": 64,
+    "training_seconds": 997.8131696251221,
+    "initial_arena_score_vs_random": 1.0,
+    "final_arena_score_vs_random": 1.0,
+    "final_training_examples_with_reflections": 12560,
+    "checkpoint": "output/reinforcement/checkpoints/connect_four_alpha_zero.pt",
+    "interpretation": "Arena scores are diagnostic; stronger claims require more games and seeds."
+  }
+}

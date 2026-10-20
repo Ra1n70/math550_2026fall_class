@@ -1,0 +1,21 @@
+{
+  "algorithm": "ppo",
+  "network": "MinAtarActorCritic",
+  "game": "breakout",
+  "environment_version": "1.0.15",
+  "environment_source": "https://github.com/kenjyoung/MinAtar",
+  "environment_license": "GPL-3.0",
+  "seed": 30550,
+  "device": "mps",
+  "checkpoint": "/Users/chen/Documents/ChatGPT/MATH550 coding/output/reinforcement/checkpoints/minatar_breakout_ppo.pt",
+  "checkpoint_sha256": "204c704315a1cd2fe2b55a8a1078a1068b09c64ce807b95079d414e6c9a6fda6",
+  "greedy_action_selection": true,
+  "sticky_action_probability": 0.1,
+  "episode_return": 1.0,
+  "episode_length": 16,
+  "terminated": true,
+  "gif": "/Users/chen/Documents/ChatGPT/MATH550 coding/output/reinforcement/demos/minatar_breakout_ppo_learned_policy.gif",
+  "contact_sheet": "/Users/chen/Documents/ChatGPT/MATH550 coding/output/reinforcement/demos/minatar_breakout_ppo_learned_policy_contact_sheet.png",
+  "trace": "/Users/chen/Documents/ChatGPT/MATH550 coding/output/reinforcement/demos/minatar_breakout_ppo_learned_policy_trace.csv",
+  "interpretation": "This visualizes one fixed-seed episode from the saved learned policy. It is a behavior trace, not an estimate of expected performance."
+}

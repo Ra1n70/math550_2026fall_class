@@ -1,0 +1,42 @@
+{
+  "scope": "deterministic estimator mechanics; not model-quality evidence",
+  "clip_epsilon": 0.2,
+  "sequence_advantage": 1.5,
+  "token_example": [
+    {
+      "position": 1,
+      "token": "We",
+      "token_ratio": 0.699999988079071,
+      "unclipped_gradient_coefficient": 1.0499999523162842,
+      "ppo_gradient_coefficient": 1.0499999523162842,
+      "signed_clipping_active": false
+    },
+    {
+      "position": 2,
+      "token": "compute",
+      "token_ratio": 0.949999988079071,
+      "unclipped_gradient_coefficient": 1.4249999523162842,
+      "ppo_gradient_coefficient": 1.4249999523162842,
+      "signed_clipping_active": false
+    },
+    {
+      "position": 3,
+      "token": "48+24",
+      "token_ratio": 1.100000023841858,
+      "unclipped_gradient_coefficient": 1.6500000953674316,
+      "ppo_gradient_coefficient": 1.6500000953674316,
+      "signed_clipping_active": false
+    },
+    {
+      "position": 4,
+      "token": "72",
+      "token_ratio": 1.350000023841858,
+      "unclipped_gradient_coefficient": 2.0250000953674316,
+      "ppo_gradient_coefficient": 0.0,
+      "signed_clipping_active": true
+    }
+  ],
+  "exact_sequence_importance_ratio": 0.9875249862670898,
+  "geometric_mean_sequence_ratio": 0.9968665838241577,
+  "interpretation": "PPO reuses tokens sampled from pi_old. Each live token gradient is scaled by A_t * pi_theta/pi_old; signed clipping sets that coefficient to zero only in the saturation direction. The product of token ratios is the exact sequence ratio."
+}

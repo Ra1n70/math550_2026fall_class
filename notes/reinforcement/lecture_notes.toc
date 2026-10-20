@@ -1,0 +1,24 @@
+\contentsline {section}{\numberline {1}How to use this module}{2}{section.1}%
+\contentsline {section}{\numberline {2}The reinforcement-learning problem}{2}{section.2}%
+\contentsline {section}{\numberline {3}From an equation to tabular Q-learning}{3}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Termination is not truncation}{3}{subsection.3.1}%
+\contentsline {section}{\numberline {4}Why deep Q-learning needs extra machinery}{4}{section.4}%
+\contentsline {subsection}{\numberline {4.1}DQN and Double-DQN targets}{4}{subsection.4.1}%
+\contentsline {section}{\numberline {5}Atari at course scale}{4}{section.5}%
+\contentsline {section}{\numberline {6}Evaluation: learning is not a loss curve}{5}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Inspect the learned policy, not only its score}{6}{subsection.6.1}%
+\contentsline {section}{\numberline {7}Policy gradients: optimize action probabilities directly}{6}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Deriving the score-function estimator rather than memorizing it}{7}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Why a baseline is unbiased---and why ``mean reward'' is not always optimal}{7}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}PPO is token/action-level importance reweighting}{8}{subsection.7.3}%
+\contentsline {subsection}{\numberline {7.4}Why language-model PPO is token-level}{8}{subsection.7.4}%
+\contentsline {subsection}{\numberline {7.5}PPO is near-on-policy, not fully on-policy or replay-buffer off-policy}{9}{subsection.7.5}%
+\contentsline {subsection}{\numberline {7.6}GRPO replaces the critic with a within-prompt comparison}{10}{subsection.7.6}%
+\contentsline {subsection}{\numberline {7.7}Exact stale-rollout correction explains PPO's approximation}{11}{subsection.7.7}%
+\contentsline {section}{\numberline {8}Planning and self-play}{11}{section.8}%
+\contentsline {subsection}{\numberline {8.1}AlphaZero-style training targets}{12}{subsection.8.1}%
+\contentsline {section}{\numberline {9}Why AlphaZero is not the Atari model}{12}{section.9}%
+\contentsline {section}{\numberline {10}Implementation map}{13}{section.10}%
+\contentsline {section}{\numberline {11}Commands and run plans}{13}{section.11}%
+\contentsline {section}{\numberline {12}Failure modes and diagnostics}{14}{section.12}%
+\contentsline {section}{\numberline {13}References}{14}{section.13}%
