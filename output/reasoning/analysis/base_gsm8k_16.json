@@ -1,0 +1,21 @@
+{
+  "problems": 16,
+  "samples_per_problem": 1,
+  "first_sample_accuracy": 0.125,
+  "first_sample_accuracy_wilson_95_low": 0.034976749337057134,
+  "first_sample_accuracy_wilson_95_high": 0.3602333143674828,
+  "majority_vote_accuracy": 0.125,
+  "pass_at_k_oracle_accuracy": 0.125,
+  "parse_rate": 1.0,
+  "marked_format_rate": 0.0,
+  "mean_group_agreement": 1.0,
+  "mean_generated_tokens": 189.1875,
+  "mean_latency_seconds": 6.148437393101631,
+  "dataset": "gsm8k",
+  "model": "base",
+  "model_id": "Qwen/Qwen2.5-0.5B-Instruct",
+  "model_revision": "7ae557604adf67be50417f59c2c2f167def9a775",
+  "device": "mps",
+  "max_new_tokens": 192,
+  "evaluation_prefix": "first 16 official rows"
+}

@@ -1,0 +1,34 @@
+{
+  "scope": "public-data parsing plus synthetic objective/autograd smoke",
+  "datasets": {
+    "gsm8k_training_rows": 7473,
+    "gsm8k_test_rows": 1319,
+    "svamp_rows": 1000,
+    "first_gsm8k_answer": "72",
+    "first_svamp_answer": "51"
+  },
+  "answer_contract": {
+    "marked_extract": "72",
+    "correct_reward": 1.1,
+    "wrong_reward": 0.1,
+    "invalid_reward": -0.1
+  },
+  "grpo": {
+    "advantages": [
+      0.991836428642273,
+      -0.8115027546882629,
+      0.991836428642273,
+      -1.172170639038086,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "all_equal_group_is_zero": true,
+    "loss": 8.014440936676692e-06,
+    "reference_kl": 0.00019872188568115234,
+    "policy_gradient_finite": true,
+    "token_log_probability_gradient_finite": true
+  },
+  "elapsed_seconds": 0.24211146199377254
+}

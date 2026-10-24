@@ -1,0 +1,305 @@
+identifier,sample_index,completion,reference_answer,predicted_answer,correct,marked_format,generated_tokens,latency_seconds
+gsm8k-test-00000,0,"To determine how much Janet makes at the farmers' market each day, we need to follow these steps:
+
+1. Calculate the total number of eggs laid by the ducks in one day.
+2. Subtract the number of eggs eaten in the morning from the total number of eggs laid.
+3. Subtract the number of eggs baked from the remaining eggs after breakfast.
+4. Determine how many ducks were laid out during the day.
+5. Calculate the revenue from selling the eggs.
+
+Let's start with the first step:
+
+1. The ducks lay 16 eggs per day.
+2. Janet eats 3 eggs for breakfast every morning, so the number of eggs eaten in the morning is:
+   \[
+   16 - 3 = 13
+   \]
+3. Janet bakes 4 muffins every day, but since muffins are not directly related to the number of eggs, we can assume that the baking process doesn't affect the",18,4,False,False,192,6.258018790977076
+gsm8k-test-00001,0,"To determine the total number of bolts needed for the robe, we need to calculate the amount of each type of fiber required and then sum them up.
+
+1. **Blue Fiber:**
+   - The robe requires 2 bolts of blue fiber.
+   
+2. **White Fiber:**
+   - The robe requires half as much white fiber as blue fiber.
+   - Therefore, the amount of white fiber is \( \frac{2}{2} = 1 \) bolt.
+
+3. **Total Number of Bolts:**
+   - To find the total number of bolts, we add the number of blue fibers and the number of white fibers:
+     \[
+     2 \text{ (blue)} + 1 \text{ (white)} = 3 \text{ bolts}
+     \]
+
+Thus, the total number of bolts needed for the robe is \(\boxed{3}\).",3,3,True,False,182,5.463925707852468
+gsm8k-test-00002,0,"To determine Josh's profit from flipping his house, we need to follow these steps:
+
+1. **Calculate the total cost of the house:**
+   - Cost of the house: $80,000
+   - Cost of repairs: $50,000
+
+   Total cost = Cost of the house + Cost of repairs
+   \[
+   \text{Total cost} = \$80,000 + \$50,000 = \$130,000
+   \]
+
+2. **Determine the increase in value due to repairs:**
+   The problem states that this increase is 150% of the original purchase price.
+
+   Increase in value = 150% of $80,000
+   \[
+   \text{Increase in value} = 1.50 \times \$80,000 = \$12",70000,12,False,False,192,5.539576790994033
+gsm8k-test-00003,0,"To determine how many total meters James runs in a week, we need to follow these steps:
+
+1. **Calculate the distance of one sprint:**
+   James runs 60 meters in each sprint.
+
+2. **Determine the number of sprints per week:**
+   James runs 3 sprints per week.
+
+3. **Calculate the total distance for one week:**
+   Multiply the distance of one sprint by the number of sprints per week:
+   \[
+   60 \text{ meters/sprint} \times 3 \text{ sprints/week} = 180 \text{ meters/week}
+   \]
+
+Thus, the total distance James runs in a week is \(\boxed{180}\) meters.",540,180,False,False,157,4.537907874910161
+gsm8k-test-00004,0,"To determine how many cups of feed Wendi needs for the final meal of the day, we can follow these steps:
+
+1. **Calculate total daily feed requirement:**
+   - Each chicken gets 3 cups of feed per day.
+   - There are 20 chickens.
+
+   \[
+   \text{Total daily feed} = 20 \text{ chickens} \times 3 \text{ cups/chicken/day}
+   \]
+
+2. **Determine the amount of feed given in the morning and afternoon:**
+   - Morning feed:
+     \[
+     \text{Morning feed} = 15 \text{ cups}
+     \]
+   
+   - Afternoon feed:
+     \[
+     \text{Afternoon feed} = 25 \text{ cups}
+     \]
+
+3. **Sum up all the feed requirements:**
+   - Total feed required for the day:
+     \[
+     \text{",20,3,False,False,192,7.052103708032519
+gsm8k-test-00005,0,"To determine how much Kylar needs to pay for 16 glasses, we first need to calculate the cost of each glass based on the given information.
+
+1. **Cost of one glass:**
+   \[
+   \text{Cost per glass} = \$5
+   \]
+
+2. **Cost of every second glass:**
+   Every second glass costs 60% of the price of one glass.
+   
+3. **Calculate the cost of one second glass:**
+   \[
+   \text{Cost of one second glass} = 0.60 \times \$5 = \$3
+   \]
+
+4. **Determine the number of seconds in 16 glasses:**
+   Since there are two seconds in a glass (one for the first half and one for the second half), we divide 16 by 2:
+   \[
+   \text{Number of seconds} = \frac{16",64,16,False,False,192,6.287759041180834
+gsm8k-test-00006,0,"To solve this problem, we need to determine the number of sheep each city has based on the given relationships and then sum them up.
+
+1. **Seattle's Sheep:**
+   - We know that Seattle has 20 sheep.
+   \[
+   S_{\text{Seattle}} = 20
+   \]
+
+2. **Charleston's Sheep:**
+   - Charleston has 4 times as many sheep as Seattle.
+   \[
+   C_{\text{Sheep}} = 4 \times S_{\text{Seattle}}
+   \]
+   Substituting \(S_{\text{Seattle}}\) into the equation:
+   \[
+   C_{\text{Sheep}} = 4 \times 20 = 80
+   \]
+
+3. **Toulouse's Sheep:**
+   - Toulouse has twice as many sheep as Charleston.
+   \[
+   T_{\text{Sheep",260,3,False,False,192,5.314358165953308
+gsm8k-test-00007,0,"To determine how long it takes for Carla to complete the download, we need to break down the process into manageable parts and calculate the time taken for each part.
+
+1. **Normal Download Time:**
+   - The normal speed at which Carla downloads is 2 GB per minute.
+   - She needs to download 200 GB in total.
+   \[
+   \text{Time for normal download} = \frac{\text{Total size}}{\text{Speed}} = \frac{200 \text{ GB}}{2 \text{ GB/min}} = 100 \text{ min}
+   \]
+
+2. **Windows Restart Time:**
+   - During this period, Windows forces a restart to install updates, taking 20 minutes.
+   \[
+   \text{Windows restart time} = 20 \text{ min}
+   \]
+
+3. **Total Download Time Calculation:**
+   - Add",160,3,False,False,192,5.505631250096485
+gsm8k-test-00008,0,"To determine how far John is from home at the end of the 4-hour journey, we need to calculate his total distance traveled and subtract it from his starting point.
+
+1. **Calculate the distance driven during the first part of the journey:**
+   - Speed: 60 mph
+   - Time: 3 hours
+   \[
+   \text{Distance} = \text{Speed} \times \text{Time} = 60 \, \text{mph} \times 3 \, \text{hours} = 180 \, \text{miles}
+   \]
+
+2. **Account for the stoppage due to traffic:**
+   - Time spent in traffic: 2 hours
+   - Distance covered while stopped: \(2 \, \text{hours} \times 60 \, \text{mph} = 120 \, \text{miles}\",45,120,False,False,192,5.5287760000210255
+gsm8k-test-00009,0,"To determine Eliza's earnings for the week, we need to calculate both her regular pay and her overtime pay separately.
+
+First, let's calculate her regular pay:
+- Eliza's regular hourly rate is $10.
+- She worked for 40 hours in the first 40 hours.
+- Therefore, her regular pay is calculated as follows:
+
+\[
+\text{Regular Pay} = \text{Hourly Rate} \times \text{Hours}
+\]
+
+Substituting the given values:
+
+\[
+\text{Regular Pay} = \$10 \times 40 = \$400
+\]
+
+Next, let's calculate her overtime pay:
+- Her overtime pay is 1.2 times her regular hourly rate.
+- The overtime rate is \(10 \times 1.2 = \$12\).
+- She worked for 45 hours in total (40 regular + 5 overtime).
+
+",460,5,False,False,192,5.564333291957155
+gsm8k-test-00010,0,"To determine the total number of downloads for the program over the three months, we will follow these steps:
+
+1. **First Month:**
+   - Number of downloads = 60
+
+2. **Second Month:**
+   - Downloads in the second month = 3 * First Month's Downloads
+     \[
+     3 \times 60 = 180
+     \]
+
+3. **Third Month:**
+   - Downloads in the third month = Downloads from the second month (reduced by 30%) 
+     \[
+     180 \times (1 - 0.30) = 180 \times 0.70 = 126
+     \]
+
+4. **Total Downloads Over Three Months:**
+   - Sum of downloads from each month:
+     \[
+     60 + 180 + 126 = 366
+",366,366,True,False,192,6.239775416906923
+gsm8k-test-00011,0,"To find the total cost, we need to calculate the cost of each type of pastry separately and then sum them up.
+
+1. **Donuts:**
+   - Toula bought 3 dozen donuts.
+   - Each dozen donuts costs $68.
+   - Total cost for donuts = \( 3 \times 68 \).
+
+2. **Mini Cupcakes:**
+   - Toula bought 2 dozen mini cupcakes.
+   - Each dozen mini cupcakes costs $80.
+   - Total cost for mini cupcakes = \( 2 \times 80 \).
+
+3. **Cheesecakes:**
+   - Toula bought 6 dozen mini cheesecakes.
+   - Each dozen mini cheesecakes costs $55.
+   - Total cost for cheesecakes = \( 6 \times 55 \).
+
+Now, let's perform these calculations:
+
+- **Total cost for donuts:** 
+  \",694,55,False,False,192,6.960691208951175
+gsm8k-test-00012,0,"To determine how many years it will take Carlos to start earning money from his lemon tree, we need to calculate the net profit per year and then figure out how long it takes for this net profit to cover the initial investment.
+
+First, let's calculate the total revenue from selling the lemons:
+- Each lemon sells for $1.5.
+- Carlos can sell 7 lemons per year.
+
+\[
+\text{Total Revenue} = 7 \times \$1.5 = \$10.5
+\]
+
+Next, we subtract the annual expenses (watering and feeding) from the total revenue to find the net profit per year:
+
+\[
+\text{Net Profit per Year} = \text{Total Revenue} - \text{Annual Expenses}
+\]
+\[
+\text{Net Profit per Year} = \$10.5 - \$3 = \$7.5
+\]
+
+Now, we need to determine how many",13,7.5,False,False,192,6.680555416969582
+gsm8k-test-00013,0,"To determine how many vacuum cleaners Melanie started with, we need to work backwards from the information given about the remaining vacuum cleaners.
+
+1. **Identify the number of vacuum cleaners left after some were sold:**
+   - Melanie has 5 vacuum cleaners left.
+   
+2. **Determine how many vacuum cleaners were sold before leaving:**
+   - Melanie sold a third of her vacuum cleaners at the green house.
+     \[
+     \text{Vacuum cleaners sold at the green house} = \frac{1}{3} \times 5 = \frac{5}{3} \approx 1.67
+     \]
+   - Since the number of vacuum cleaners must be an integer, let's assume she sold 1 vacuum cleaner (as it would make sense in practical terms).
+
+3. **Calculate the total number of vacuum cleaners sold so far:**
+   - Total vacuum cleaners sold so far:
+     \[
+     1",18,1,False,False,192,6.983507625060156
+gsm8k-test-00014,0,"To determine the percentage of the entire students enrolled in hip-hop dance, we will follow these steps:
+
+1. **Calculate the number of students enrolled in contemporary dance:**
+   \[
+   \text{Number of students in contemporary dance} = 20\%
+   \]
+   \[
+   \text{Number of students in contemporary dance} = 0.20 \times 20 = 4
+   \]
+
+2. **Determine the number of students remaining after those who enrolled in contemporary dance:**
+   \[
+   \text{Remaining students} = 20 - 4 = 16
+   \]
+
+3. **Calculate the number of students enrolled in jazz dance:**
+   \[
+   \text{Number of students in jazz dance} = 25\%
+   \]
+   \[
+   \text{Number of students in jazz dance} = 0.25 \times",60,0.25,False,False,192,7.936385916778818
+gsm8k-test-00015,0,"To determine the maximum profit for the merchant, we need to calculate the expected value of each plan after considering the expected price changes.
+
+### Jewelry Plan:
+- Initial cost: $5,000
+- Price change percentage: +2.5%
+
+Expected price increase = Initial price * (Price change percentage / 100)
+= $5,000 * (2.5/100)
+= $5,000 * 0.025
+= $125
+
+Expected new price = Initial price + Expected price increase
+= $5,000 + $125
+= $5,125
+
+Profit from the jewelry plan = Expected new price - Initial cost
+= $5,125 - $5,000
+= $125
+
+### Electronic Gadgets Plan:
+- Initial cost: $8,000
+- Price change",125,8000,False,False,192,6.521692082984373

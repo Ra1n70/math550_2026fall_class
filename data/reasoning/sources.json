@@ -1,0 +1,83 @@
+{
+  "datasets": {
+    "gsm8k_train": {
+      "dataset": "GSM8K main train split",
+      "repository": "https://github.com/openai/grade-school-math",
+      "revision": "3101c7d5072418e28b9008a6636bde82a006892c",
+      "download_url": "https://raw.githubusercontent.com/openai/grade-school-math/3101c7d5072418e28b9008a6636bde82a006892c/grade_school_math/data/train.jsonl",
+      "local_path": "gsm8k_train.jsonl",
+      "sha256": "17f347dc51477c50d4efb83959dbb7c56297aba886e5544ee2aaed3024813465",
+      "rows": 7473,
+      "license": "MIT",
+      "paper": "https://arxiv.org/abs/2110.14168"
+    },
+    "gsm8k_test": {
+      "dataset": "GSM8K main test split",
+      "repository": "https://github.com/openai/grade-school-math",
+      "revision": "3101c7d5072418e28b9008a6636bde82a006892c",
+      "download_url": "https://raw.githubusercontent.com/openai/grade-school-math/3101c7d5072418e28b9008a6636bde82a006892c/grade_school_math/data/test.jsonl",
+      "local_path": "gsm8k_test.jsonl",
+      "sha256": "3730d312f6e3440559ace48831e51066acaca737f6eabec99bccb9e4b3c39d14",
+      "rows": 1319,
+      "license": "MIT",
+      "paper": "https://arxiv.org/abs/2110.14168"
+    },
+    "svamp": {
+      "dataset": "SVAMP challenge set",
+      "repository": "https://github.com/arkilpatel/SVAMP",
+      "revision": "689d7ccac74b9983a2ac7cc3b264f441b99e7c53",
+      "download_url": "https://raw.githubusercontent.com/arkilpatel/SVAMP/689d7ccac74b9983a2ac7cc3b264f441b99e7c53/SVAMP.json",
+      "local_path": "svamp.json",
+      "sha256": "5be77703a6d891ae476d7c082787ad361392aa02453b132516cdd5f4e7934e3e",
+      "rows": 1000,
+      "license": "MIT",
+      "paper": "https://aclanthology.org/2021.naacl-main.168/"
+    }
+  },
+  "base_model": {
+    "model_id": "Qwen/Qwen2.5-0.5B-Instruct",
+    "revision": "7ae557604adf67be50417f59c2c2f167def9a775",
+    "model_page": "https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct/tree/7ae557604adf67be50417f59c2c2f167def9a775",
+    "weights_file": "model.safetensors",
+    "weights_bytes": 988097824,
+    "license": "Apache-2.0",
+    "parameters": 494032768
+  },
+  "model_profiles": {
+    "qwen-0.5b": {
+      "model_id": "Qwen/Qwen2.5-0.5B-Instruct",
+      "revision": "7ae557604adf67be50417f59c2c2f167def9a775",
+      "model_page": "https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct/tree/7ae557604adf67be50417f59c2c2f167def9a775",
+      "approximate_weight_bytes": 988097824,
+      "license": "Apache-2.0",
+      "course_role": "fast default for CPU/MPS pipeline checks"
+    },
+    "qwen-math-1.5b": {
+      "model_id": "Qwen/Qwen2.5-Math-1.5B-Instruct",
+      "revision": "aafeb0fc6f22cbf0eaeed126eff8be45b0360a35",
+      "model_page": "https://huggingface.co/Qwen/Qwen2.5-Math-1.5B-Instruct/tree/aafeb0fc6f22cbf0eaeed126eff8be45b0360a35",
+      "approximate_weight_bytes": 3090000000,
+      "license": "Apache-2.0",
+      "course_role": "stronger math-specialized single-GPU or high-memory-Mac option"
+    },
+    "olmo2-1b-instruct": {
+      "model_id": "allenai/OLMo-2-0425-1B-Instruct",
+      "revision": "48d788eca847d4d7548f375ad03d3c9312f6139e",
+      "model_page": "https://huggingface.co/allenai/OLMo-2-0425-1B-Instruct/tree/48d788eca847d4d7548f375ad03d3c9312f6139e",
+      "approximate_weight_bytes": 2980000000,
+      "license": "Apache-2.0",
+      "course_role": "open-science comparison checkpoint; already includes RLVR post-training"
+    }
+  },
+  "teaching_references": {
+    "stanford_cs336_assignment5_alignment": {
+      "course_page": "https://cs336.stanford.edu/",
+      "repository": "https://github.com/stanford-cs336/assignment5-alignment",
+      "revision": "c2734a26308710949fe13226960a1e8cece94b7e",
+      "handout_path": "cs336_spring2026_assignment5_alignment.pdf",
+      "handout_sha256": "c93d503a69aef4aa7519b7fc664abebbf2ebf5e5e88379a7ed92f4c209a2d26a",
+      "handout_bytes": 765568,
+      "license": "repository LICENSE file; teaching reference only, not redistributed by this module"
+    }
+  }
+}

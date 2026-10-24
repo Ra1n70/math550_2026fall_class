@@ -1,0 +1,21 @@
+{
+  "problems": 16,
+  "samples_per_problem": 1,
+  "first_sample_accuracy": 0.3125,
+  "first_sample_accuracy_wilson_95_low": 0.14164435051961052,
+  "first_sample_accuracy_wilson_95_high": 0.5559606813326594,
+  "majority_vote_accuracy": 0.3125,
+  "pass_at_k_oracle_accuracy": 0.3125,
+  "parse_rate": 1.0,
+  "marked_format_rate": 1.0,
+  "mean_group_agreement": 1.0,
+  "mean_generated_tokens": 82.4375,
+  "mean_latency_seconds": 3.2577483333006967,
+  "dataset": "gsm8k",
+  "model": "checkpoints/reasoning/sft-smoke/adapter",
+  "model_id": "Qwen/Qwen2.5-0.5B-Instruct",
+  "model_revision": "7ae557604adf67be50417f59c2c2f167def9a775",
+  "device": "mps",
+  "max_new_tokens": 192,
+  "evaluation_prefix": "first 16 official rows"
+}

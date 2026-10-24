@@ -1,0 +1,4 @@
+condition,problems,samples_per_problem,accuracy,majority_accuracy,pass_at_k,format_rate,mean_tokens
+base greedy,16,1,0.125,0.125,0.125,0.0,189.1875
+20-step SFT greedy,16,1,0.3125,0.3125,0.3125,1.0,82.4375
+20-step SFT sample 4,8,4,0.25,0.25,0.5,0.96875,92.125

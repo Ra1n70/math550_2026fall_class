@@ -1,0 +1,54 @@
+{
+  "gsm8k_train": {
+    "rows": 7473,
+    "question_words": {
+      "minimum": 9,
+      "median": 42,
+      "mean": 45.092600026763016,
+      "p90": 69,
+      "maximum": 183
+    },
+    "rationale_words": {
+      "minimum": 2,
+      "median": 45,
+      "mean": 49.71176234443998,
+      "p90": 85,
+      "maximum": 214
+    },
+    "rationale_lines": {
+      "minimum": 2,
+      "median": 3,
+      "mean": 3.5760738659173024,
+      "p90": 6,
+      "maximum": 9
+    }
+  },
+  "gsm8k_test": {
+    "rows": 1319,
+    "question_words": {
+      "minimum": 15,
+      "median": 43,
+      "mean": 46.25094768764215,
+      "p90": 70,
+      "maximum": 164
+    },
+    "rationale_words": {
+      "minimum": 3,
+      "median": 47,
+      "mean": 50.78392721758908,
+      "p90": 87,
+      "maximum": 171
+    }
+  },
+  "svamp": {
+    "rows": 1000,
+    "question_words": {
+      "minimum": 15,
+      "median": 30.0,
+      "mean": 31.754,
+      "p90": 42,
+      "maximum": 57
+    }
+  },
+  "download_bytes": 5255914
+}

@@ -1,0 +1,42 @@
+{
+  "environment": "MinAtar Asterix",
+  "environment_version": "1.0.15",
+  "source_url": "https://github.com/kenjyoung/MinAtar",
+  "paper_url": "https://arxiv.org/abs/1903.03176",
+  "license": "GPL-3.0",
+  "game": "asterix",
+  "steps": 20000,
+  "seed": 551,
+  "policy": "uniform random over the six-action set",
+  "sticky_action_probability": 0.1,
+  "difficulty_ramping": true,
+  "observation_shape": [
+    10,
+    10,
+    4
+  ],
+  "action_count": 6,
+  "arrays": {
+    "observations": [
+      20000,
+      10,
+      10,
+      4
+    ],
+    "actions": [
+      20000
+    ],
+    "rewards": [
+      20000
+    ],
+    "next_observations": [
+      20000,
+      10,
+      10,
+      4
+    ],
+    "terminated": [
+      20000
+    ]
+  }
+}

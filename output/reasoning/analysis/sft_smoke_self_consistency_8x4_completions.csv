@@ -1,0 +1,151 @@
+identifier,sample_index,completion,reference_answer,predicted_answer,correct,marked_format,generated_tokens,latency_seconds
+gsm8k-test-00000,0,"Her total number of eggs is 16 + 3+4=23
+She makes 2 * 2 = $4 each day from selling the eggs
+So Janet makes 23 * 4 = $92
+#### 92废",18,92,False,True,55,0.7991863749921322
+gsm8k-test-00000,1,"She has
+#### 320",18,320,False,True,55,0.7991863749921322
+gsm8k-test-00000,2,"Her total daily earnings from selling eggs is 16 * 4 = 64 eggs
+Since each egg costs 2$, she makes
+#### 38",18,38,False,True,55,0.7991863749921322
+gsm8k-test-00000,3,"She gets 3 + 4 = 7 eggs to eat.
+That means she has 16 - '])
+she makes 16 x 2
+#### 96",18,96,False,True,55,0.7991863749921322
+gsm8k-test-00001,0,"There are 2 x . 5 = 1
+bolt of white fabric.
+Therefore, there are 1 + 2 = 3
+bolts of fabric total.",3,3,True,False,74,0.8239754895330407
+gsm8k-test-00001,1,"Since 1 bolt has half as much white fiber as blue,
+the number of white bolts is .5 x 2 = 1.
+The number of blue bolts is 2
+#### 3",3,3,True,True,74,0.8239754895330407
+gsm8k-test-00001,2,"If a ro
+#### 1",3,1,False,True,74,0.8239754895330407
+gsm8k-test-00001,3,"Each bolt of blue fiber costs $150.
+Each bolt of white fiber costs $30.
+There are 2 * 0.5 = 1 bolt of white fiber
+The total cost is $150 + $30 = $180.
+Therefore, there are 2 x 1 = 2 bolts.
+#### 2",3,2,False,True,74,0.8239754895330407
+gsm8k-test-00002,0,"He put in $30,000 for repairs because 80,000 - 80,000 = 30,000
+The house was worth $130,000
+It is now worth 1.5 * 130,000 = $195,000
+It has increased by 150%
+The increase in value is 195,000 x .15 = $29,250
+So he made $29,250 - 80,000 = $52,750
+#### 52750",70000,52750,False,True,147,1.6716912395204417
+gsm8k-test-00002,1,"If the house was worth $80,000 after the repairs,
+then it increased in value by $80,000 * . 15 = $12,000.
+So Josh sold the house for $80,000 + $12,000 = $92,000
+#### 32000",70000,32000,False,True,147,1.6716912395204417
+gsm8k-test-00002,2,"The total cost of the house was
+80,000 + 50,000 = $$130,000$$
+If the price of the house went up by 150%, it means that if we multiplied the original price by
+1 + 150/100 = 2/1
+It becomes the new price.
+So,
+$$130,000 * 2/1 = $$
+#### 60000",70000,60000,False,True,147,1.6716912395204417
+gsm8k-test-00002,3,"Josh’s total cost was
+$80,000 + $50,000 = $130,000
+The house went up in value by
+150/100 * $130,000 = $1上千
+So Josh made a profit of
+$130,000 - $1,000,000 = -$90,000
+#### -90",70000,-90,False,True,147,1.6716912395204417
+gsm8k-test-00003,0,"He runs 60 x 3 = 180 meters per week.
+#### 180",540,180,False,True,42,0.5516584167489782
+gsm8k-test-00003,1,"He runs 180
+#### 450",540,450,False,True,42,0.5516584167489782
+gsm8k-test-00003,2,"He runs 60 x 3 = 180 minutes for all his sprints.
+So he runs 180/60 = 3 kilometers in a week.
+#### 3",540,3,False,True,42,0.5516584167489782
+gsm8k-test-00003,3,"He runs 3 * 3 = 9
+times in a week.
+So he runs 9 * 60 = 540
+meters each week.
+#### 540",540,540,True,True,42,0.5516584167489782
+gsm8k-test-00004,0,"Wendi has 饿鸡 x=3
+She gave 15+25=40 cups of feed
+So she needs 40/3=13 1/3
+The number of cups needed for final meal of the day is 13 1/3
+#### 3",20,3,False,True,95,1.166141624969896
+gsm8k-test-00004,1,"In one day, she needs to give 3 x 3 = 9 cups of feed for each chicken.
+So for 20 chickens, that would be 9 x 20 = 180 cups of feed.
+She gave her flock 15 + 25 = 40 cups of==
+### #### 170",20,170,False,True,95,1.166141624969896
+gsm8k-test-00004,2,"Wendi feeds each chicken 3 cups of mixed food per day.
+So, for 20 chickens, that means she needs 20 x 3 = 60 cups of feed every day.
+She gave 15 + 25 = 40 cups of feed throughout the morning and afternoon.
+Therefore, she needs 60 - 40 = 20 cups of feed in the final meal of the day.
+#### 20",20,20,True,True,95,1.166141624969896
+gsm8k-test-00004,3,"Wendi needs to mix
+#### 70",20,70,False,True,95,1.166141624969896
+gsm8k-test-00005,0,"One glass cost 5 * .6 = $3.
+So 16 glasses will cost 3 * 16 = $48.
+Since every second glass costs 5 * .6 = $3,
+Then he needs to pay 5 - 3 = $2 for each of the two glasses.
+That means he needs to pay 2 * 4 = $8 for all of them.
+#### 8",64,8,False,True,111,1.2727949062827975
+gsm8k-test-00005,1,"If one pair of glasses costs 5 * .6 = $3 less than the original price.
+So each glass costs 5 - 3 = $2
+He needs to pay 16 * 2 = $<<2*16=32>>32 for 16 pairs of glasses
+#### 32",64,32,False,True,111,1.2727949062827975
+gsm8k-test-00005,2,"If one glass costs $5,
+then each of the two glasses that cost less than $5 is worth
+$5 * . 6 = $3.
+So Kylar would be willing to pay
+for 8 glasses because
+he could get 4 more at a
+price lower than
+the original price
+because
+that's how many
+of the cheaper ones
+are still there.
+Therefore, K헙ary needs to pay
+$5*8= $40
+for the 16 glasses.
+#### 40",64,40,False,True,111,1.2727949062827975
+gsm8k-test-00005,3,"If one glass costs $5, then every second glass costs $5 * .6 = $3.
+So Kylar will have to spend 16 / 2 = 8 sets of 60%
+At $5 * .6 = $3 per set,
+He would have to pay 8 * $3 =
+#### 48",64,48,False,True,111,1.2727949062827975
+gsm8k-test-00006,0,"If Seattle has 20 sheep,
+then
+Charleston has 4 * 20 = 80 sheep.
+And since
+Toulouse has two times more sheep than
+Charleston,
+therefore, Toulouse has 2 * 80 = 160 sheep.
+Therefore, Toulouse, Charleston, and Seattle have
+a total of
+20 + 80 + 160 = 260 sheep.
+#### 260",260,260,True,True,98,1.1211203332641162
+gsm8k-test-00006,1,"Seattle has 20
+#### 160",260,160,False,True,98,1.1211203332641162
+gsm8k-test-00006,2,"If Seattle has 20 sheep,
+then Charleston has 4 * 20 = 80 sheep.
+And since Toulouse has twice as many sheep as Charleston,
+then Toulouse has 2 * 80 = 160 sheep.
+Together, Toulouse, Charleston, and Seattle have 160 + 80 + 20 = 260 sheep.
+#### 260",260,260,True,True,98,1.1211203332641162
+gsm8k-test-00006,3,"There are 20 x 4 = 80 sheep in Charleston.
+Thus,
+Toula
+#### 160",260,160,False,True,98,1.1211203332641162
+gsm8k-test-00007,0,"She has already downloaded for 160 GB (2 * 8) out of 200 GB,
+which means she needs to download at a rate of 320 GB / 160 GB = .5
+#### 2",160,2,False,True,115,1.2561288647702895
+gsm8k-test-00007,1,"The total time for Carla to complete the download is 38 minutes because 40 x 15 = 600 GB.
+She would have to wait 20 + 15 = 35 minutes during the restarts.
+#### 9",160,9,False,True,115,1.2561288647702895
+gsm8k-test-00007,2,"At this point,
+She had downloaded 16 segment
+#### 75",160,75,False,True,115,1.2561288647702895
+gsm8k-test-00007,3,"She will have downloaded for 160GB because 200 x .6 = 120
+The update took 20 mins so she had to wait for another 50 mins before she could start again because 120 + 20 = 140
+After that she had 80 GB left so it will take her 80 / 2 = 40 mins to complete the download because 100 - 140 < 80 < 160
+#### 3",160,3,False,True,115,1.2561288647702895

@@ -1,0 +1,35 @@
+{
+  "sources_file": "data/reasoning/sources.json",
+  "files": {
+    "gsm8k_train": {
+      "path": "data/reasoning/gsm8k_train.jsonl",
+      "requested_url": "https://raw.githubusercontent.com/openai/grade-school-math/3101c7d5072418e28b9008a6636bde82a006892c/grade_school_math/data/train.jsonl",
+      "resolved_url": "https://raw.githubusercontent.com/openai/grade-school-math/3101c7d5072418e28b9008a6636bde82a006892c/grade_school_math/data/train.jsonl",
+      "bytes": 4166206,
+      "sha256": "17f347dc51477c50d4efb83959dbb7c56297aba886e5544ee2aaed3024813465",
+      "status": "existing"
+    },
+    "gsm8k_test": {
+      "path": "data/reasoning/gsm8k_test.jsonl",
+      "requested_url": "https://raw.githubusercontent.com/openai/grade-school-math/3101c7d5072418e28b9008a6636bde82a006892c/grade_school_math/data/test.jsonl",
+      "resolved_url": "https://raw.githubusercontent.com/openai/grade-school-math/3101c7d5072418e28b9008a6636bde82a006892c/grade_school_math/data/test.jsonl",
+      "bytes": 749738,
+      "sha256": "3730d312f6e3440559ace48831e51066acaca737f6eabec99bccb9e4b3c39d14",
+      "status": "existing"
+    },
+    "svamp": {
+      "path": "data/reasoning/svamp.json",
+      "requested_url": "https://raw.githubusercontent.com/arkilpatel/SVAMP/689d7ccac74b9983a2ac7cc3b264f441b99e7c53/SVAMP.json",
+      "resolved_url": "https://raw.githubusercontent.com/arkilpatel/SVAMP/689d7ccac74b9983a2ac7cc3b264f441b99e7c53/SVAMP.json",
+      "bytes": 339970,
+      "sha256": "5be77703a6d891ae476d7c082787ad361392aa02453b132516cdd5f4e7934e3e",
+      "status": "existing"
+    }
+  },
+  "validated_examples": {
+    "gsm8k_train": 7473,
+    "gsm8k_test": 1319,
+    "svamp": 1000
+  },
+  "validated_numeric_answers": true
+}

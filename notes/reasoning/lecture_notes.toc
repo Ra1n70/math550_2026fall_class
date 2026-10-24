@@ -1,0 +1,28 @@
+\contentsline {section}{\numberline {1}The main idea}{3}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Learning outcomes}{3}{subsection.1.1}%
+\contentsline {section}{\numberline {2}Chain of thought is a behavior, not a training algorithm}{3}{section.2}%
+\contentsline {subsection}{\numberline {2.1}What enters the context, and what the model must generate}{4}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Why CoT can help---and what that evidence does not prove}{4}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}CoT under outcome-supervision RL}{5}{subsection.2.3}%
+\contentsline {section}{\numberline {3}A four-week classroom sequence}{5}{section.3}%
+\contentsline {section}{\numberline {4}From next-token prediction to worked solutions}{5}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Why written work can help}{6}{subsection.4.1}%
+\contentsline {section}{\numberline {5}Parameter-efficient adaptation with LoRA}{6}{section.5}%
+\contentsline {section}{\numberline {6}Data: GSM8K without test leakage}{6}{section.6}%
+\contentsline {section}{\numberline {7}Evaluation is part of the model}{7}{section.7}%
+\contentsline {subsection}{\numberline {7.1}A robust but narrow answer contract}{7}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Uncertainty}{8}{subsection.7.2}%
+\contentsline {section}{\numberline {8}Inference-time scaling}{8}{section.8}%
+\contentsline {section}{\numberline {9}Alignment is a family of data--objective pairs}{9}{section.9}%
+\contentsline {section}{\numberline {10}Deriving language-model policy gradients}{9}{section.10}%
+\contentsline {section}{\numberline {11}GRPO is an estimator design space}{10}{section.11}%
+\contentsline {section}{\numberline {12}On-policy, stale rollouts, clipping, and GSPO}{11}{section.12}%
+\contentsline {subsection}{\numberline {12.1}Reference regularization}{12}{subsection.12.1}%
+\contentsline {section}{\numberline {13}Verifiable reward and its failure modes}{12}{section.13}%
+\contentsline {section}{\numberline {14}Implementation map}{13}{section.14}%
+\contentsline {section}{\numberline {15}Running the module}{13}{section.15}%
+\contentsline {section}{\numberline {16}Measured evidence and interpretation}{14}{section.16}%
+\contentsline {section}{\numberline {17}Choosing a base model on one consumer device}{15}{section.17}%
+\contentsline {section}{\numberline {18}How to scale the experiment responsibly}{15}{section.18}%
+\contentsline {section}{\numberline {19}Limitations and responsible claims}{15}{section.19}%
+\contentsline {section}{\numberline {20}References}{16}{section.20}%

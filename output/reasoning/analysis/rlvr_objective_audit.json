@@ -1,0 +1,215 @@
+{
+  "scope": "Fixed-tensor behavior audit. It verifies estimator mechanics and induced weighting; it is not evidence that one RLVR algorithm trains a better language model.",
+  "seed": 550,
+  "group_rewards": [
+    [
+      1.0,
+      1.0,
+      1.0,
+      0.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  ],
+  "sequence_lengths": [
+    4,
+    3,
+    2,
+    1,
+    4,
+    3,
+    2,
+    1,
+    4,
+    3,
+    2,
+    1
+  ],
+  "variants": [
+    {
+      "variant": "GRPO",
+      "baseline": "mean",
+      "advantage_normalizer": "std",
+      "loss_normalization": "sequence",
+      "advantages": [
+        0.5773502588272095,
+        0.5773502588272095,
+        0.5773502588272095,
+        -1.732050895690918,
+        1.732050895690918,
+        -0.5773502588272095,
+        -0.5773502588272095,
+        -0.5773502588272095,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "zero_advantage_fraction": 0.3333333432674408,
+      "loss": -0.06735753268003464,
+      "gradient_l2": 0.18108898401260376
+    },
+    {
+      "variant": "GRPO constant",
+      "baseline": "mean",
+      "advantage_normalizer": "std",
+      "loss_normalization": "constant",
+      "advantages": [
+        0.5773502588272095,
+        0.5773502588272095,
+        0.5773502588272095,
+        -1.732050895690918,
+        1.732050895690918,
+        -0.5773502588272095,
+        -0.5773502588272095,
+        -0.5773502588272095,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "zero_advantage_fraction": 0.3333333432674408,
+      "loss": 0.03367876634001732,
+      "gradient_l2": 0.09316950291395187
+    },
+    {
+      "variant": "Dr. GRPO",
+      "baseline": "mean",
+      "advantage_normalizer": "none",
+      "loss_normalization": "constant",
+      "advantages": [
+        0.25,
+        0.25,
+        0.25,
+        -0.75,
+        0.75,
+        -0.25,
+        -0.25,
+        -0.25,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "zero_advantage_fraction": 0.3333333432674408,
+      "loss": 0.01458333432674408,
+      "gradient_l2": 0.04034357890486717
+    },
+    {
+      "variant": "RFT",
+      "baseline": "none",
+      "advantage_normalizer": "none",
+      "loss_normalization": "constant",
+      "advantages": [
+        1.0,
+        1.0,
+        1.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "zero_advantage_fraction": 0.6666666865348816,
+      "loss": 0.1041666641831398,
+      "gradient_l2": 0.07511565089225769
+    },
+    {
+      "variant": "MaxRL",
+      "baseline": "mean",
+      "advantage_normalizer": "mean",
+      "loss_normalization": "constant",
+      "advantages": [
+        0.3333333432674408,
+        0.3333333432674408,
+        0.3333333432674408,
+        -1.0,
+        3.0,
+        -1.0,
+        -1.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "zero_advantage_fraction": 0.3333333432674408,
+      "loss": 0.03750000521540642,
+      "gradient_l2": 0.13819269835948944
+    }
+  ],
+  "off_policy": [
+    {
+      "method": "noclip",
+      "loss": 0.026556581258773804,
+      "clip_fraction": 0.0,
+      "importance_mean": 0.9832014441490173,
+      "importance_min": 0.7046880722045898,
+      "importance_max": 1.357058048248291
+    },
+    {
+      "method": "grpo",
+      "loss": 0.026556581258773804,
+      "clip_fraction": 0.46666666865348816,
+      "importance_mean": 0.9832014441490173,
+      "importance_min": 0.7046880722045898,
+      "importance_max": 1.357058048248291
+    },
+    {
+      "method": "gspo",
+      "loss": 0.02657865546643734,
+      "clip_fraction": 0.5,
+      "importance_mean": 0.9831222891807556,
+      "importance_min": 0.7206083536148071,
+      "importance_max": 1.357058048248291
+    },
+    {
+      "method": "cispo",
+      "loss": 0.026556581258773804,
+      "clip_fraction": 0.20000000298023224,
+      "importance_mean": 0.9832014441490173,
+      "importance_min": 0.7046880722045898,
+      "importance_max": 1.357058048248291
+    }
+  ],
+  "asymptotic_binary_prompt_weights": {
+    "success_probability": [
+      0.10000000149011612,
+      0.5,
+      0.8999999761581421
+    ],
+    "dr_grpo": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "grpo_std": [
+      3.3333334922790527,
+      2.0,
+      3.3333327770233154
+    ],
+    "maxrl": [
+      10.0,
+      2.0,
+      1.1111111640930176
+    ]
+  },
+  "reference": {
+    "stanford_cs336_revision": "c2734a26308710949fe13226960a1e8cece94b7e",
+    "handout_sha256": "c93d503a69aef4aa7519b7fc664abebbf2ebf5e5e88379a7ed92f4c209a2d26a"
+  }
+}
